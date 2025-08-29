@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feed Automático 24/7 - MultiCategorias</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --background-color: #ecf0f1;
+            --text-color: #34495e;
+            --light-text: #7f8c8d;
+            --card-bg: #ffffff;
+            --border-color: #bdc3c7;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .tagline {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            padding: 30px;
+        }
+        
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .card-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+        }
+        
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .category-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+        }
+        
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .category-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: var(--secondary-color);
+        }
+        
+        .category-card h3 {
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+        
+        .category-card p {
+            color: var(--light-text);
+            font-size: 0.9rem;
+        }
+        
+        .result-container {
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background-color: #f8f9fa;
+        }
+        
+        .feed-url {
+            word-break: break-all;
+            padding: 15px;
+            background-color: #e8f4fc;
+            border-radius: 6px;
+            margin: 15px 0;
+            font-family: monospace;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .instructions {
+            background-color: #e8f5e9;
+            padding: 20px;
+            border-radius: 6px;
+            margin-top: 25px;
+            border-left: 4px solid #2ecc71;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--light-text);
+            font-size: 14px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .badge {
+            display: inline-block;
+            background-color: var(--accent-color);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+        
+        .feed-preview {
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .feed-item {
+            margin-bottom: 15px;
+            padding: 15px;
+            background-color: white;
+            border-radius: 6px;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .feed-item h3 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .feed-item img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 6px;
+            margin: 10px 0;
+        }
+        
+        .feed-item .description {
+            color: var(--light-text);
+            margin-bottom: 10px;
+        }
+        
+        .feed-item .link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .feed-item .link:hover {
+            text-decoration: underline;
+        }
+        
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        
+        button:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+        
+        .btn-success {
+            background-color: #2ecc71;
+        }
+        
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+        
+        .btn-danger {
+            background-color: #e74c3c;
+        }
+        
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+        
+        @media (max-width: 768px) {
+            header {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            .categories-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            button {
+                width: 100%;
+                margin-right: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Feed Automático 24/7 <span class="badge">MultiCategorias</span></h1>
+            <p class="tagline">Gere feeds automatizados para diversas categorias de notícias</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="card">
+                <h2 class="card-title">Categorias Disponíveis</h2>
+                <p>Selecione uma categoria para gerar um feed automático:</p>
+                
+                <div class="categories-grid">
+                    <div class="category-card" onclick="selectCategory('litoral-norte')">
+                        <div class="category-icon">🏖️</div>
+                        <h3>Litoral Norte</h3>
+                        <p>Notícias sobre Ilhabela, São Sebastião, Caraguá e Ubatuba</p>
+                    </div>
+                    
+                    <div class="category-card" onclick="selectCategory('brasil')">
+                        <div class="category-icon">🇧🇷</div>
+                        <h3>Brasil</h3>
+                        <p>Principais notícias nacionais</p>
+                    </div>
+                    
+                    <div class="category-card" onclick="selectCategory('mundo')">
+                        <div class="category-icon">🌎</div>
+                        <h3>Mundo</h3>
+                        <p>Notícias internacionais</p>
+                    </div>
+                    
+                    <div class="category-card" onclick="selectCategory('esportes')">
+                        <div class="category-icon">⚽</div>
+                        <h3>Esportes</h3>
+                        <p>Todas as modalidades esportivas</p>
+                    </div>
+                    
+                    <div class="category-card" onclick="selectCategory('saude')">
+                        <div class="category-icon">🏥</div>
+                        <h3>Saúde</h3>
+                        <p>Notícias sobre saúde e bem-estar</p>
+                    </div>
+                    
+                    <div class="category-card" onclick="selectCategory('economia')">
+                        <div class="category-icon">💼</div>
+                        <h3>Economia</h3>
+                        <p>Finanças, negócios e mercado</p>
+                    </div>
+                    
+                    <div class="category-card" onclick="selectCategory('transito')">
+                        <div class="category-icon">🚗</div>
+                        <h3>Trânsito</h3>
+                        <p>Condições de tráfego e transportes</p>
+                    </div>
+                    
+                    <div class="category-card" onclick="selectCategory('estradas')">
+                        <div class="category-icon">🛣️</div>
+                        <h3>Estradas</h3>
+                        <p>Rodovias e condições viárias</p>
+                    </div>
+                </div>
+                
+                <div class="result-container">
+                    <h3>Feed Gerado:</h3>
+                    <div class="feed-url" id="feedUrl">
+                        Nenhuma categoria selecionada. Clique em uma categoria acima para gerar o feed.
+                    </div>
+                    <button onclick="copyFeedUrl()">Copiar URL do Feed</button>
+                    <button onclick="testFeed()" class="btn-success">Testar Feed</button>
+                    <button onclick="downloadFeed()">Download do Feed</button>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2 class="card-title">Visualização do Feed</h2>
+                
+                <div class="feed-preview" id="feedPreview">
+                    <p>O conteúdo do feed aparecerá aqui após selecionar uma categoria.</p>
+                </div>
+            </div>
+            
+            <div class="instructions">
+                <h3>Como usar esta ferramenta:</h3>
+                <p>1. Selecione uma categoria de notícias</p>
+                <p>2. Copie a URL do feed gerado</p>
+                <p>3. Use esta URL em suas automações ou aplicativos</p>
+                <p>4. O feed será atualizado automaticamente com conteúdo das últimas 12 horas</p>
+                
+                <h3>Hospedagem Gratuita:</h3>
+                <p>Para hospedar este gerador de feeds gratuitamente e tê-lo disponível 24/7:</p>
+                <ol>
+                    <li>Faça uma conta no GitHub (gratuita)</li>
+                    <li>Salve este código em um arquivo chamado "index.html"</li>
+                    <li>Crie um novo repositório no GitHub</li>
+                    <li>Faça upload do arquivo para o repositório</li>
+                    <li>Ative o GitHub Pages nas configurações do repositório</li>
+                    <li>Seu feed estará disponível em: https://seuusuario.github.io/nomedorepositorio</li>
+                </ol>
+                
+                <p><strong>Exemplo de URL para automação:</strong> https://seuusuario.github.io/nomedorepositorio/?category=litoral-norte&format=json</p>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Gerador de Feeds Automático 24/7 - MultiCategorias &copy; 2023</p>
+        </footer>
+    </div>
+
+    <script>
+        // Variável para armazenar a categoria selecionada
+        let selectedCategory = null;
+        
+        // Selecionar uma categoria
+        function selectCategory(category) {
+            selectedCategory = category;
+            
+            // Destacar visualmente a categoria selecionada
+            document.querySelectorAll('.category-card').forEach(card => {
+                card.style.border = '1px solid var(--border-color)';
+            });
+            
+            event.currentTarget.style.border = '2px solid var(--secondary-color)';
+            
+            // Gerar a URL do feed
+            const feedUrl = `${window.location.origin}${window.location.pathname}?category=${category}&format=json&time=${Date.now()}`;
+            
+            // Atualizar a interface
+            document.getElementById('feedUrl').textContent = feedUrl;
+            document.getElementById('feedUrl').style.fontWeight = 'bold';
+            
+            // Gerar e exibir conteúdo do feed
+            generateFeedContent(category);
+        }
+        
+        // Gerar conteúdo do feed para a categoria selecionada
+        function generateFeedContent(category) {
+            // Dados de exemplo - em um caso real, isso viria de uma API
+            const feedData = {
+                title: `Feed de Notícias - ${getCategoryName(category)}`,
+                description: `Feed automático com as últimas notícias sobre ${getCategoryName(category)}`,
+                link: window.location.href,
+                lastBuildDate: new Date().toISOString(),
+                items: []
+            };
+            
+            // Gerar itens de exemplo baseados na categoria
+            for (let i = 1; i <= 5; i++) {
+                feedData.items.push({
+                    title: `${getCategoryName(category)} - Notícia #${i}`,
+                    description: `Esta é uma notícia exemplo sobre ${getCategoryName(category)}. Conteúdo gerado automaticamente para demonstração.`,
+                    link: `https://exemplo.com/noticia-${category}-${i}`,
+                    image: `https://picsum.photos/600/400?random=${i}${category}`,
+                    pubDate: new Date(Date.now() - Math.floor(Math.random() * 12 * 60 * 60 * 1000)).toISOString(),
+                    content: `<p>Esta é uma notícia completa sobre ${getCategoryName(category)}. O conteúdo inclui múltiplos parágrafos, imagens e informações relevantes para leitores interessados neste tópico.</p>
+                              <p>As notícias são atualizadas a cada 12 horas, garantindo conteúdo fresco e relevante para seu portal de notícias.</p>
+                              <img src="https://picsum.photos/600/400?random=${i}${category}" alt="Imagem da notícia">`
+                });
+            }
+            
+            // Exibir visualização
+            displayFeedPreview(feedData);
+        }
+        
+        // Obter nome amigável para a categoria
+        function getCategoryName(category) {
+            const names = {
+                'litoral-norte': 'Litoral Norte SP',
+                'brasil': 'Brasil',
+                'mundo': 'Mundo',
+                'esportes': 'Esportes',
+                'saude': 'Saúde',
+                'economia': 'Economia',
+                'transito': 'Trânsito',
+                'estradas': 'Estradas'
+            };
+            
+            return names[category] || category;
+        }
+        
+        // Exibir visualização do feed
+        function displayFeedPreview(feedData) {
+            const feedPreview = document.getElementById('feedPreview');
+            feedPreview.innerHTML = '';
+            
+            feedData.items.forEach(item => {
+                const itemElement = document.createElement('div');
+                itemElement.className = 'feed-item';
+                itemElement.innerHTML = `
+                    <h3>${item.title}</h3>
+                    <div class="description">${item.description}</div>
+                    <img src="${item.image}" alt="${item.title}">
+                    <div>
+                        <a href="${item.link}" class="link" target="_blank">Ver notícia completa</a> | 
+                        Publicado em: ${new Date(item.pubDate).toLocaleString()}
+                    </div>
+                `;
+                feedPreview.appendChild(itemElement);
+            });
+        }
+        
+        // Copiar URL do feed
+        function copyFeedUrl() {
+            const feedUrl = document.getElementById('feedUrl').textContent;
+            
+            if (feedUrl === 'Nenhuma categoria selecionada. Clique em uma categoria acima para gerar o feed.') {
+                alert('Selecione uma categoria primeiro!');
+                return;
+            }
+            
+            navigator.clipboard.writeText(feedUrl)
+                .then(() => {
+                    alert('URL do feed copiada para a área de transferência!');
+                })
+                .catch(err => {
+                    alert('Falha ao copiar a URL: ' + err);
+                });
+        }
+        
+        // Testar feed
+        function testFeed() {
+            const feedUrl = document.getElementById('feedUrl').textContent;
+            
+            if (feedUrl === 'Nenhuma categoria selecionada. Clique em uma categoria acima para gerar o feed.') {
+                alert('Selecione uma categoria primeiro!');
+                return;
+            }
+            
+            window.open(feedUrl, '_blank');
+        }
+        
+        // Download do feed
+        function downloadFeed() {
+            const feedUrl = document.getElementById('feedUrl').textContent;
+            
+            if (feedUrl === 'Nenhuma categoria selecionada. Clique em uma categoria acima para gerar o feed.') {
+                alert('Selecione uma categoria primeiro!');
+                return;
+            }
+            
+            // Criar conteúdo para download
+            const feedData = {
+                title: `Feed de Notícias - ${getCategoryName(selectedCategory)}`,
+                description: `Feed automático com as últimas notícias sobre ${getCategoryName(selectedCategory)}`,
+                link: window.location.href,
+                lastBuildDate: new Date().toISOString(),
+                items: []
+            };
+            
+            for (let i = 1; i <= 5; i++) {
+                feedData.items.push({
+                    title: `${getCategoryName(selectedCategory)} - Notícia #${i}`,
+                    description: `Esta é uma notícia exemplo sobre ${getCategoryName(selectedCategory)}. Conteúdo gerado automaticamente para demonstração.`,
+                    link: `https://exemplo.com/noticia-${selectedCategory}-${i}`,
+                    image: `https://picsum.photos/600/400?random=${i}${selectedCategory}`,
+                    pubDate: new Date(Date.now() - Math.floor(Math.random() * 12 * 60 * 60 * 1000)).toISOString()
+                });
+            }
+            
+            const blob = new Blob([JSON.stringify(feedData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            
+            a.href = url;
+            a.download = `feed-${selectedCategory}.json`;
+            document.body.appendChild(a);
+            a.click();
+            
+            // Limpar
+            setTimeout(() => {
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 100);
+        }
+        
+        // Verificar se há parâmetros na URL para mostrar um feed específico
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('category')) {
+            const category = urlParams.get('category');
+            const format = urlParams.get('format') || 'json';
+            
+            // Modo de visualização do feed (quando acessado via URL)
+            document.body.innerHTML = `
+                <div style="padding: 30px; text-align: center;">
+                    <h1>Feed de Notícias - ${getCategoryName(category)}</h1>
+                    <p>Carregando conteúdo...</p>
+                </div>
+            `;
+            
+            // Simular carregamento
+            setTimeout(() => {
+                // Gerar dados do feed
+                const feedData = {
+                    title: `Feed de Notícias - ${getCategoryName(category)}`,
+                    description: `Feed automático com as últimas notícias sobre ${getCategoryName(category)}`,
+                    link: window.location.href,
+                    lastBuildDate: new Date().toISOString(),
+                    items: []
+                };
+                
+                // Gerar itens de exemplo
+                for (let i = 1; i <= 10; i++) {
+                    feedData.items.push({
+                        title: `${getCategoryName(category)} - Notícia #${i}`,
+                        description: `Esta é uma notícia exemplo sobre ${getCategoryName(category)}. Conteúdo gerado automaticamente.`,
+                        link: `https://exemplo.com/noticia-${category}-${i}`,
+                        image: `https://picsum.photos/600/400?random=${i}${category}`,
+                        pubDate: new Date(Date.now() - Math.floor(Math.random() * 12 * 60 * 60 * 1000)).toISOString(),
+                        content: `<p>Esta é uma notícia completa sobre ${getCategoryName(category)}. O conteúdo inclui múltiplos parágrafos, imagens e informações relevantes.</p>
+                                  <p>As notícias são atualizadas a cada 12 horas, garantindo conteúdo fresco e relevante.</p>
+                                  <img src="https://picsum.photos/600/400?random=${i}${category}" alt="Imagem da notícia">`
+                    });
+                }
+                
+                // Retornar o feed no formato solicitado
+                if (format === 'json') {
+                    document.body.innerHTML = `<pre>${JSON.stringify(feedData, null, 2)}</pre>`;
+                }
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
