@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Feed de Notícias de Tecnologia</title>
+    <title>Feed de Notícias com Busca e Exportação</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -47,17 +47,59 @@
         
         .controls {
             display: flex;
-            justify-content: center;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
             gap: 15px;
             margin-bottom: 25px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .search-section {
+            display: flex;
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 12px 20px;
+            border: 2px solid #0061ff;
+            border-radius: 50px 0 0 50px;
+            font-size: 1rem;
+            outline: none;
+        }
+        
+        .search-btn {
+            background: #0061ff;
+            color: white;
+            border: none;
+            padding: 0 25px;
+            border-radius: 0 50px 50px 0;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .search-btn:hover {
+            background: #0040ff;
+        }
+        
+        .categories {
+            display: flex;
             flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
         }
         
         .category-btn {
             background: white;
             border: 2px solid #0061ff;
             color: #0061ff;
-            padding: 10px 20px;
+            padding: 8px 16px;
             border-radius: 50px;
             cursor: pointer;
             font-weight: 600;
@@ -69,7 +111,12 @@
             color: white;
         }
         
-        .refresh-btn {
+        .export-section {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .export-btn {
             background: #00c853;
             color: white;
             border: none;
@@ -83,9 +130,17 @@
             transition: all 0.3s ease;
         }
         
-        .refresh-btn:hover {
+        .export-btn:hover {
             background: #009624;
             transform: scale(1.05);
+        }
+        
+        .export-btn.rss {
+            background: #ff8f00;
+        }
+        
+        .export-btn.rss:hover {
+            background: #ef6c00;
         }
         
         .news-grid {
@@ -202,26 +257,50 @@
             header h1 {
                 font-size: 2rem;
             }
+            
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-section {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
     <header>
         <div class="container">
-            <h1><i class="fas fa-newspaper"></i> Feed de Notícias de Tecnologia</h1>
-            <p>Fique por dentro das últimas notícias do mundo tech</p>
+            <h1><i class="fas fa-newspaper"></i> Feed de Notícias com Busca</h1>
+            <p>Encontre e exporte notícias por palavras-chave</p>
         </div>
     </header>
     
     <div class="container">
         <div class="controls">
-            <button class="category-btn active" data-category="technology">Tecnologia</button>
-            <button class="category-btn" data-category="apple">Apple</button>
-            <button class="category-btn" data-category="google">Google</button>
-            <button class="category-btn" data-category="microsoft">Microsoft</button>
-            <button class="refresh-btn" id="refresh-btn">
-                <i class="fas fa-sync-alt"></i> Atualizar Notícias
-            </button>
+            <div class="search-section">
+                <input type="text" class="search-input" id="search-input" placeholder="Digite palavras-chave...">
+                <button class="search-btn" id="search-btn">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+            
+            <div class="categories">
+                <button class="category-btn active" data-category="technology">Tecnologia</button>
+                <button class="category-btn" data-category="apple">Apple</button>
+                <button class="category-btn" data-category="google">Google</button>
+                <button class="category-btn" data-category="microsoft">Microsoft</button>
+            </div>
+            
+            <div class="export-section">
+                <button class="export-btn" id="export-json">
+                    <i class="fas fa-file-code"></i> JSON
+                </button>
+                <button class="export-btn rss" id="export-rss">
+                    <i class="fas fa-rss"></i> RSS
+                </button>
+            </div>
         </div>
         
         <div id="news-container">
@@ -234,26 +313,31 @@
     
     <footer>
         <div class="container">
-            <p>Feed de Notícias de Tecnologia &copy; 2023 - Desenvolvido com <i class="fas fa-heart" style="color: #d32f2f;"></i></p>
+            <p>Feed de Notícias com Busca e Exportação &copy; 2023 - Desenvolvido com <i class="fas fa-heart" style="color: #d32f2f;"></i></p>
         </div>
     </footer>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const newsContainer = document.getElementById('news-container');
-            const refreshBtn = document.getElementById('refresh-btn');
+            const searchBtn = document.getElementById('search-btn');
+            const searchInput = document.getElementById('search-input');
             const categoryBtns = document.querySelectorAll('.category-btn');
+            const exportJsonBtn = document.getElementById('export-json');
+            const exportRssBtn = document.getElementById('export-rss');
+            
             let currentCategory = 'technology';
+            let currentNews = [];
             
             // Sua chave da API NewsAPI
             const apiKey = '52765fac5f45400591205d8a82af7bee';
             
             // Função para buscar notícias
-            async function fetchNews(category = 'technology') {
+            async function fetchNews(category = 'technology', query = '') {
                 newsContainer.innerHTML = `
                     <div class="loading">
                         <i class="fas fa-spinner fa-spin"></i>
-                        <p>Carregando notícias de ${category}...</p>
+                        <p>Carregando notícias ${query ? 'para: ' + query : 'de ' + category}...</p>
                     </div>
                 `;
                 
@@ -261,10 +345,12 @@
                     // Construindo a URL da API com sua chave
                     let apiUrl;
                     
-                    if (category === 'technology') {
-                        apiUrl = `https://newsapi.org/v2/top-headlines?category=technology&language=pt&pageSize=12&apiKey=${apiKey}`;
+                    if (query) {
+                        apiUrl = `https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&language=pt&sortBy=publishedAt&pageSize=20&apiKey=${apiKey}`;
+                    } else if (category === 'technology') {
+                        apiUrl = `https://newsapi.org/v2/top-headlines?category=technology&language=pt&pageSize=20&apiKey=${apiKey}`;
                     } else {
-                        apiUrl = `https://newsapi.org/v2/everything?q=${category}+tecnologia&language=pt&sortBy=publishedAt&pageSize=12&apiKey=${apiKey}`;
+                        apiUrl = `https://newsapi.org/v2/everything?q=${category}+tecnologia&language=pt&sortBy=publishedAt&pageSize=20&apiKey=${apiKey}`;
                     }
                     
                     // Usando um proxy para contornar problemas de CORS
@@ -278,9 +364,10 @@
                     const data = await response.json();
                     
                     if (data.articles && data.articles.length > 0) {
-                        displayNews(data.articles);
+                        currentNews = data.articles;
+                        displayNews(currentNews);
                     } else {
-                        throw new Error('Nenhuma notícia encontrada para esta categoria');
+                        throw new Error('Nenhuma notícia encontrada para esta pesquisa');
                     }
                 } catch (error) {
                     console.error(error);
@@ -293,7 +380,7 @@
                     `;
                     
                     // Tentar novamente após 5 segundos
-                    setTimeout(() => fetchNews(currentCategory), 5000);
+                    setTimeout(() => fetchNews(currentCategory, query), 5000);
                 }
             }
             
@@ -334,9 +421,80 @@
                 }
             }
             
+            // Função para exportar para JSON
+            function exportToJson() {
+                if (currentNews.length === 0) {
+                    alert('Não há notícias para exportar!');
+                    return;
+                }
+                
+                const dataStr = JSON.stringify(currentNews, null, 2);
+                const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+                
+                const exportFileDefaultName = 'noticias.json';
+                
+                const linkElement = document.createElement('a');
+                linkElement.setAttribute('href', dataUri);
+                linkElement.setAttribute('download', exportFileDefaultName);
+                linkElement.click();
+            }
+            
+            // Função para exportar para RSS
+            function exportToRss() {
+                if (currentNews.length === 0) {
+                    alert('Não há notícias para exportar!');
+                    return;
+                }
+                
+                let rss = `<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+<channel>
+    <title>Feed de Notícias de Tecnologia</title>
+    <link>https://exemplo.com/feed</link>
+    <description>Últimas notícias de tecnologia</description>
+    <language>pt-br</language>`;
+                
+                currentNews.forEach(article => {
+                    if (!article.title || article.title === '[Removed]') return;
+                    
+                    rss += `
+    <item>
+        <title>${article.title.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</title>
+        <link>${article.url}</link>
+        <description>${(article.description || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</description>
+        <pubDate>${new Date(article.publishedAt).toUTCString()}</pubDate>
+        <source url="${article.url}">${article.source.name || 'Fonte'}</source>
+    </item>`;
+                });
+                
+                rss += `
+</channel>
+</rss>`;
+                
+                const dataUri = 'data:application/rss+xml;charset=utf-8,'+ encodeURIComponent(rss);
+                const exportFileDefaultName = 'noticias.rss';
+                
+                const linkElement = document.createElement('a');
+                linkElement.setAttribute('href', dataUri);
+                linkElement.setAttribute('download', exportFileDefaultName);
+                linkElement.click();
+            }
+            
             // Event listeners
-            refreshBtn.addEventListener('click', () => {
-                fetchNews(currentCategory);
+            searchBtn.addEventListener('click', () => {
+                const query = searchInput.value.trim();
+                if (query) {
+                    fetchNews('', query);
+                }
+            });
+            
+            searchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    const query = searchInput.value.trim();
+                    if (query) {
+                        fetchNews('', query);
+                    }
+                }
             });
             
             categoryBtns.forEach(btn => {
@@ -344,9 +502,13 @@
                     categoryBtns.forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
                     currentCategory = btn.dataset.category;
+                    searchInput.value = '';
                     fetchNews(currentCategory);
                 });
             });
+            
+            exportJsonBtn.addEventListener('click', exportToJson);
+            exportRssBtn.addEventListener('click', exportToRss);
             
             // Carregar notícias inicialmente
             fetchNews();
