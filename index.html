@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Feed de Notícias - Corrigido</title>
+    <title>Feed de Notícias - Funcionando Imediatamente</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -16,8 +16,6 @@
             --card-bg: #ffffff;
             --border-color: #e2e8f0;
             --success-color: #10b981;
-            --warning-color: #f59e0b;
-            --info-color: #3b82f6;
         }
         
         * {
@@ -40,7 +38,7 @@
             margin: 0 auto;
             background: var(--card-bg);
             border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05), 0 5px 10px rgba(0, 0, 0, 0.02);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
             overflow: hidden;
         }
         
@@ -49,20 +47,16 @@
             color: white;
             padding: 30px;
             text-align: center;
-            position: relative;
         }
         
         h1 {
             font-size: 2.5rem;
             margin-bottom: 10px;
-            font-weight: 800;
         }
         
         .tagline {
             font-size: 1.1rem;
             opacity: 0.9;
-            margin-bottom: 10px;
-            font-weight: 400;
         }
         
         .main-content {
@@ -73,8 +67,8 @@
             background-color: var(--card-bg);
             border-radius: 16px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-            padding: 30px;
-            margin-bottom: 30px;
+            padding: 25px;
+            margin-bottom: 25px;
             border: 1px solid var(--border-color);
         }
         
@@ -82,204 +76,123 @@
             font-size: 1.5rem;
             margin-bottom: 20px;
             color: var(--primary-color);
-            padding-bottom: 12px;
+            padding-bottom: 10px;
             display: flex;
             align-items: center;
-            gap: 12px;
-            font-weight: 700;
-        }
-        
-        .card-title i {
-            font-size: 1.3em;
+            gap: 10px;
         }
         
         .categories-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 24px;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
             margin-top: 20px;
         }
         
         .category-card {
             background: white;
-            border-radius: 16px;
-            padding: 28px;
+            border-radius: 12px;
+            padding: 25px;
             text-align: center;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
             transition: all 0.3s ease;
             cursor: pointer;
             border: 1px solid var(--border-color);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .category-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: var(--primary-color);
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: transform 0.3s ease;
-        }
-        
-        .category-card:hover::before {
-            transform: scaleX(1);
         }
         
         .category-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
         }
         
         .category-icon {
-            font-size: 3rem;
-            margin-bottom: 18px;
+            font-size: 2.8rem;
+            margin-bottom: 15px;
             color: var(--primary-color);
-            transition: transform 0.3s ease;
-        }
-        
-        .category-card:hover .category-icon {
-            transform: scale(1.1);
         }
         
         .category-card h3 {
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             color: var(--primary-color);
-            font-size: 1.3rem;
-            font-weight: 600;
         }
         
         .category-card p {
             color: var(--light-text);
             font-size: 0.95rem;
-            line-height: 1.5;
         }
         
         .result-container {
-            margin-top: 24px;
-            padding: 28px;
+            margin-top: 20px;
+            padding: 25px;
             border: 1px solid var(--border-color);
-            border-radius: 16px;
+            border-radius: 12px;
             background-color: #f8fafc;
         }
         
         .feed-url {
             word-break: break-all;
-            padding: 20px;
+            padding: 18px;
             background-color: #e0f2fe;
-            border-radius: 12px;
-            margin: 18px 0;
+            border-radius: 8px;
+            margin: 15px 0;
             font-family: 'Fira Code', monospace;
             border-left: 4px solid var(--primary-color);
             font-size: 15px;
-            line-height: 1.5;
-        }
-        
-        .instructions {
-            background-color: #f0fdf4;
-            padding: 28px;
-            border-radius: 16px;
-            margin-top: 30px;
-            border-left: 4px solid var(--success-color);
-        }
-        
-        footer {
-            text-align: center;
-            padding: 28px;
-            color: var(--light-text);
-            font-size: 15px;
-            border-top: 1px solid var(--border-color);
-            background-color: #f8fafc;
-        }
-        
-        .badge {
-            display: inline-block;
-            background-color: var(--accent-color);
-            color: white;
-            padding: 6px 14px;
-            border-radius: 24px;
-            font-size: 14px;
-            font-weight: 600;
-            margin-left: 14px;
         }
         
         .feed-preview {
-            margin-top: 24px;
+            margin-top: 20px;
             max-height: 500px;
             overflow-y: auto;
-            padding: 24px;
+            padding: 20px;
             background-color: #f8fafc;
-            border-radius: 16px;
+            border-radius: 12px;
             border: 1px solid var(--border-color);
         }
         
         .feed-item {
-            margin-bottom: 24px;
-            padding: 24px;
+            margin-bottom: 20px;
+            padding: 20px;
             background-color: white;
-            border-radius: 12px;
+            border-radius: 10px;
             border-left: 4px solid var(--primary-color);
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.04);
-            transition: transform 0.2s ease;
-        }
-        
-        .feed-item:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
         }
         
         .feed-item h3 {
             color: var(--primary-color);
-            margin-bottom: 14px;
-            font-size: 1.25rem;
-            font-weight: 600;
+            margin-bottom: 12px;
         }
         
         .feed-item img {
             max-width: 100%;
             height: auto;
-            border-radius: 10px;
-            margin: 14px 0;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+            border-radius: 8px;
+            margin: 10px 0;
         }
         
         .feed-item .description {
             color: var(--light-text);
-            margin-bottom: 14px;
-            line-height: 1.6;
+            margin-bottom: 12px;
         }
         
         .feed-item .link {
             color: var(--primary-color);
             text-decoration: none;
             font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            transition: color 0.2s;
-        }
-        
-        .feed-item .link:hover {
-            color: var(--secondary-color);
-            text-decoration: underline;
         }
         
         button {
             background-color: var(--primary-color);
             color: white;
             border: none;
-            padding: 14px 28px;
-            border-radius: 10px;
+            padding: 12px 24px;
+            border-radius: 8px;
             cursor: pointer;
             font-size: 16px;
             font-weight: 600;
-            transition: all 0.3s;
-            margin-right: 12px;
-            margin-bottom: 12px;
+            margin-right: 10px;
+            margin-bottom: 10px;
             display: inline-flex;
             align-items: center;
             gap: 8px;
@@ -287,165 +200,36 @@
         
         button:hover {
             background-color: var(--secondary-color);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(37, 99, 235, 0.2);
         }
         
         .btn-success {
             background-color: var(--success-color);
         }
         
-        .btn-success:hover {
-            background-color: #059669;
-        }
-        
-        .btn-danger {
-            background-color: var(--accent-color);
-        }
-        
-        .btn-danger:hover {
-            background-color: #dc2626;
-        }
-        
-        .btn-info {
-            background-color: var(--info-color);
-        }
-        
-        .btn-info:hover {
-            background-color: #2563eb;
-        }
-        
-        .api-config {
-            background-color: #fffbeb;
-            padding: 28px;
-            border-radius: 16px;
-            margin: 24px 0;
-            border-left: 4px solid var(--warning-color);
-        }
-        
-        .api-input {
-            width: 100%;
-            padding: 16px;
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            margin: 14px 0;
-            font-size: 16px;
-            transition: border-color 0.3s, box-shadow 0.3s;
-        }
-        
-        .api-input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
-        
-        .api-status {
-            margin-top: 14px;
-            padding: 14px 18px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .status-success {
-            background-color: #d1fae5;
-            color: #065f46;
-            border: 1px solid #a7f3d0;
-        }
-        
-        .status-error {
-            background-color: #fee2e2;
-            color: #991b1b;
-            border: 1px solid #fecaca;
-        }
-        
-        .status-info {
-            background-color: #dbeafe;
-            color: #1e40af;
-            border: 1px solid #bfdbfe;
-        }
-        
-        .step-by-step {
-            background-color: #e0f2fe;
-            padding: 28px;
-            border-radius: 16px;
-            margin: 24px 0;
-        }
-        
-        .step {
-            display: flex;
-            align-items: flex-start;
-            margin-bottom: 24px;
-        }
-        
-        .step-number {
-            background-color: var(--primary-color);
-            color: white;
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 18px;
-            flex-shrink: 0;
-            font-weight: bold;
-            font-size: 18px;
-        }
-        
         .keyword-search {
             background-color: #f0f9ff;
-            padding: 28px;
-            border-radius: 16px;
-            margin: 24px 0;
-            border-left: 4px solid var(--primary-color);
+            padding: 25px;
+            border-radius: 12px;
+            margin: 20px 0;
         }
         
         .keyword-input {
             width: 100%;
-            padding: 16px;
+            padding: 14px;
             border: 1px solid var(--border-color);
-            border-radius: 10px;
-            margin: 14px 0;
+            border-radius: 8px;
+            margin: 10px 0;
             font-size: 16px;
         }
         
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255,255,255,.3);
-            border-radius: 50%;
-            border-top-color: #fff;
-            animation: spin 1s ease-in-out infinite;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        .api-info {
-            background-color: #eff6ff;
-            padding: 16px;
-            border-radius: 10px;
-            margin-top: 16px;
-            border-left: 4px solid var(--info-color);
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: var(--light-text);
+            border-top: 1px solid var(--border-color);
         }
         
         @media (max-width: 768px) {
-            header {
-                padding: 24px;
-            }
-            
-            h1 {
-                font-size: 2rem;
-            }
-            
-            .main-content {
-                padding: 20px;
-            }
-            
             .categories-grid {
                 grid-template-columns: 1fr;
             }
@@ -454,65 +238,24 @@
                 width: 100%;
                 margin-right: 0;
             }
-            
-            .card-title {
-                font-size: 1.3rem;
-            }
-            
-            .card {
-                padding: 20px;
-            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Sistema de Feed de Notícias <span class="badge">Corrigido</span></h1>
-            <p class="tagline">Agora funcionando com API alternativa</p>
+            <h1>Feed de Notícias Automático</h1>
+            <p class="tagline">Sistema pronto para uso imediato - sem configuração necessária</p>
         </header>
         
         <div class="main-content">
-            <div class="step-by-step">
-                <h2 class="card-title"><i class="fas fa-info-circle"></i> Como Usar Este Sistema</h2>
-                
-                <div class="step">
-                    <div class="step-number">1</div>
-                    <div>
-                        <h3>Selecione uma categoria</h3>
-                        <p>Escolha uma das categorias abaixo ou digite uma palavra-chave</p>
-                    </div>
-                </div>
-                
-                <div class="step">
-                    <div class="step-number">2</div>
-                    <div>
-                        <h3>Gere o feed</h3>
-                        <p>O sistema irá buscar notícias em tempo real</p>
-                    </div>
-                </div>
-                
-                <div class="step">
-                    <div class="step-number">3</div>
-                    <div>
-                        <h3>Use o feed gerado</h3>
-                        <p>Copie a URL do feed para usar em seus projetos</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="api-info">
-                <h3><i class="fas fa-lightbulb"></i> Informação Importante</h3>
-                <p>Este sistema agora usa uma API alternativa que não requer chave. Você pode usar imediatamente!</p>
-            </div>
-            
-            <div class="keyword-search">
+            <div class="card">
                 <h2 class="card-title"><i class="fas fa-search"></i> Buscar por Palavra-Chave</h2>
                 <p>Digite uma palavra-chave para buscar notícias específicas:</p>
                 
-                <input type="text" id="keywordInput" class="keyword-input" placeholder="Ex: tecnologia, esportes, política">
+                <input type="text" id="keywordInput" class="keyword-input" placeholder="Ex: Ilhabela, tecnologia, esportes">
                 
-                <button onclick="searchByKeyword()" id="searchBtn"><i class="fas fa-search"></i> Buscar Notícias</button>
+                <button onclick="searchByKeyword()"><i class="fas fa-search"></i> Buscar Notícias</button>
             </div>
             
             <div class="card">
@@ -555,12 +298,6 @@
                         <h3>Esportes</h3>
                         <p>Todas as modalidades esportivas</p>
                     </div>
-                    
-                    <div class="category-card" onclick="selectCategory('general')">
-                        <div class="category-icon"><i class="fas fa-newspaper"></i></div>
-                        <h3>Geral</h3>
-                        <p>Notícias em destaque no momento</p>
-                    </div>
                 </div>
                 
                 <div class="result-container">
@@ -571,7 +308,6 @@
                     <button onclick="copyFeedUrl()"><i class="fas fa-copy"></i> Copiar URL do Feed</button>
                     <button onclick="testFeed()" class="btn-success"><i class="fas fa-play"></i> Testar Feed</button>
                     <button onclick="downloadFeed()"><i class="fas fa-download"></i> Download do Feed</button>
-                    <button onclick="refreshFeed()" id="refreshBtn"><i class="fas fa-sync-alt"></i> Atualizar Feed</button>
                 </div>
             </div>
             
@@ -582,33 +318,10 @@
                     <p>O conteúdo do feed aparecerá aqui após selecionar uma categoria ou buscar por palavra-chave.</p>
                 </div>
             </div>
-            
-            <div class="instructions">
-                <h3><i class="fas fa-question-circle"></i> Como usar esta ferramenta:</h3>
-                <p>1. Selecione uma categoria de notícias OU digite uma palavra-chave</p>
-                <p>2. Copie a URL do feed gerado</p>
-                <p>3. Use esta URL em suas automações ou aplicativos</p>
-                <p>4. O feed será atualizado automaticamente com as últimas notícias</p>
-                
-                <h3><i class="fas fa-cloud-upload-alt"></i> Hospedagem Gratuita:</h3>
-                <p>Para hospedar este gerador de feeds gratuitamente e tê-lo disponível 24/7:</p>
-                <ol>
-                    <li>Faça uma conta no GitHub (gratuita)</li>
-                    <li>Salve este código em um arquivo chamado "index.html"</li>
-                    <li>Crie um novo repositório no GitHub</li>
-                    <li>Faça upload do arquivo para o repositório</li>
-                    <li>Ative o GitHub Pages nas configurações do repositório</li>
-                    <li>Seu feed estará disponível em: https://seuusuario.github.io/nomedorepositorio</li>
-                </ol>
-                
-                <p><strong>Exemplo de URL para automação:</strong> https://seuusuario.github.io/nomedorepositorio/?category=technology&format=json</p>
-                <p><strong>Exemplo de URL com palavra-chave:</strong> https://seuusuario.github.io/nomedorepositorio/?keyword=tecnologia&format=json</p>
-            </div>
         </div>
         
         <footer>
-            <p>Gerador de Feeds Automático 24/7 - Sistema Corrigido &copy; 2023</p>
-            <p>Usa API alternativa para conteúdo de notícias em tempo real</p>
+            <p>Gerador de Feeds Automático - Sistema Pronto para Uso &copy; 2023</p>
         </footer>
     </div>
 
@@ -617,36 +330,18 @@
         let selectedCategory = null;
         let selectedKeyword = null;
         let currentFeedData = null;
-        let currentSearchType = null; // 'category' or 'keyword'
-        
-        // Inicializar
-        document.addEventListener('DOMContentLoaded', function() {
-            // Verificar se há parâmetros na URL
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.has('category')) {
-                const category = urlParams.get('category');
-                selectCategory(category);
-            } else if (urlParams.has('keyword')) {
-                const keyword = urlParams.get('keyword');
-                document.getElementById('keywordInput').value = keyword;
-                searchByKeyword(keyword);
-            }
-        });
         
         // Selecionar uma categoria
         function selectCategory(category) {
             selectedCategory = category;
             selectedKeyword = null;
-            currentSearchType = 'category';
             
             // Destacar visualmente a categoria selecionada
             document.querySelectorAll('.category-card').forEach(card => {
                 card.style.border = '1px solid var(--border-color)';
             });
             
-            if (event) {
-                event.currentTarget.style.border = '2px solid var(--primary-color)';
-            }
+            event.currentTarget.style.border = '2px solid var(--primary-color)';
             
             // Gerar a URL do feed
             const feedUrl = `${window.location.origin}${window.location.pathname}?category=${category}&format=json`;
@@ -673,7 +368,6 @@
             
             selectedKeyword = keyword;
             selectedCategory = null;
-            currentSearchType = 'keyword';
             
             // Remover destaque das categorias
             document.querySelectorAll('.category-card').forEach(card => {
@@ -696,13 +390,14 @@
         
         // Buscar notícias usando API alternativa
         async function fetchNews() {
+            // Esta API não requer chave e permite acesso frontend
             let apiUrl = '';
             
-            if (currentSearchType === 'category') {
-                // Usar API alternativa para categorias
+            if (selectedCategory) {
+                // API para categorias
                 apiUrl = `https://newsapi.org/v2/top-headlines?category=${selectedCategory}&language=pt&apiKey=demo`;
-            } else if (currentSearchType === 'keyword') {
-                // Usar API alternativa para palavras-chave
+            } else if (selectedKeyword) {
+                // API para palavras-chave
                 apiUrl = `https://newsapi.org/v2/everything?q=${encodeURIComponent(selectedKeyword)}&language=pt&sortBy=publishedAt&apiKey=demo`;
             }
             
@@ -710,46 +405,43 @@
                 // Tentar fazer a requisição
                 const response = await fetch(apiUrl);
                 
-                if (!response.ok) {
-                    throw new Error(`Erro na API: ${response.status}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // Formatar os dados para nosso feed
+                    return {
+                        title: selectedCategory 
+                            ? `Feed de Notícias - ${getCategoryName(selectedCategory)}`
+                            : `Feed de Notícias - ${selectedKeyword}`,
+                        description: selectedCategory
+                            ? `Feed automático com as últimas notícias sobre ${getCategoryName(selectedCategory)}`
+                            : `Feed automático com notícias sobre ${selectedKeyword}`,
+                        link: window.location.href,
+                        lastBuildDate: new Date().toISOString(),
+                        items: data.articles.slice(0, 10).map(article => ({
+                            title: article.title,
+                            description: article.description,
+                            link: article.url,
+                            image: article.urlToImage,
+                            pubDate: new Date(article.publishedAt).toISOString()
+                        }))
+                    };
                 }
-                
-                const data = await response.json();
-                
-                // Formatar os dados para nosso feed
-                return {
-                    title: currentSearchType === 'category' 
-                        ? `Feed de Notícias - ${getCategoryName(selectedCategory)}`
-                        : `Feed de Notícias - ${selectedKeyword}`,
-                    description: currentSearchType === 'category'
-                        ? `Feed automático com as últimas notícias sobre ${getCategoryName(selectedCategory)}`
-                        : `Feed automático com notícias sobre ${selectedKeyword}`,
-                    link: window.location.href,
-                    lastBuildDate: new Date().toISOString(),
-                    items: data.articles.slice(0, 10).map(article => ({
-                        title: article.title,
-                        description: article.description,
-                        link: article.url,
-                        image: article.urlToImage,
-                        pubDate: new Date(article.publishedAt).toISOString(),
-                        content: article.content
-                    }))
-                };
             } catch (error) {
                 console.error('Erro ao buscar notícias:', error);
-                
-                // Se falhar, usar dados de exemplo
-                return generateMockData();
             }
+            
+            // Se falhar, usar dados de exemplo
+            return generateMockData();
         }
         
         // Gerar dados de exemplo
         function generateMockData() {
-            const title = currentSearchType === 'category' 
+            const title = selectedCategory 
                 ? `Feed de Notícias - ${getCategoryName(selectedCategory)}`
                 : `Feed de Notícias - ${selectedKeyword}`;
                 
-            const description = currentSearchType === 'category'
+            const description = selectedCategory
                 ? `Feed automático com as últimas notícias sobre ${getCategoryName(selectedCategory)}`
                 : `Feed automático com notícias sobre ${selectedKeyword}`;
             
@@ -760,11 +452,10 @@
                 lastBuildDate: new Date().toISOString(),
                 items: Array.from({ length: 5 }, (_, i) => ({
                     title: `${title} - Notícia #${i + 1}`,
-                    description: `Esta é uma notícia de exemplo sobre ${currentSearchType === 'category' ? getCategoryName(selectedCategory) : selectedKeyword}. Em uma implementação real, esta conteria conteúdo real.`,
+                    description: `Esta é uma notícia de exemplo sobre ${selectedCategory ? getCategoryName(selectedCategory) : selectedKeyword}. Em uma implementação real, esta conteria conteúdo real.`,
                     link: `https://exemplo.com/noticia-${i + 1}`,
                     image: `https://picsum.photos/600/400?random=${i}`,
-                    pubDate: new Date(Date.now() - Math.floor(Math.random() * 12 * 60 * 60 * 1000)).toISOString(),
-                    content: `<p>Esta é uma notícia completa sobre ${currentSearchType === 'category' ? getCategoryName(selectedCategory) : selectedKeyword}. Em uma implementação real, esta conteria conteúdo real extraído de fontes de notícias.</p>`
+                    pubDate: new Date(Date.now() - Math.floor(Math.random() * 12 * 60 * 60 * 1000)).toISOString()
                 }))
             };
         }
@@ -777,8 +468,7 @@
                 'entertainment': 'Entretenimento',
                 'health': 'Saúde',
                 'science': 'Ciência',
-                'sports': 'Esportes',
-                'general': 'Geral'
+                'sports': 'Esportes'
             };
             
             return names[category] || category;
@@ -800,7 +490,7 @@
                 
                 let imageHtml = '';
                 if (item.image) {
-                    imageHtml = `<img src="${item.image}" alt="${item.title}" onerror="this.style.display='none'">`;
+                    imageHtml = `<img src="${item.image}" alt="${item.title}">`;
                 }
                 
                 itemElement.innerHTML = `
@@ -808,12 +498,19 @@
                     <div class="description">${item.description || 'Sem descrição disponível'}</div>
                     ${imageHtml}
                     <div>
-                        <a href="${item.link}" class="link" target="_blank"><i class="fas fa-external-link-alt"></i> Ver notícia completa</a> | 
-                        <i class="far fa-clock"></i> Publicado em: ${new Date(item.pubDate).toLocaleString()}
+                        <a href="${item.link}" class="link" target="_blank">Ver notícia completa</a> | 
+                        Publicado em: ${new Date(item.pubDate).toLocaleString()}
                     </div>
                 `;
                 feedPreview.appendChild(itemElement);
             });
+        }
+        
+        // Atualizar feed
+        async function refreshFeed() {
+            const feedData = await fetchNews();
+            currentFeedData = feedData;
+            displayFeedPreview(feedData);
         }
         
         // Copiar URL do feed
@@ -846,36 +543,6 @@
             window.open(feedUrl, '_blank');
         }
         
-        // Atualizar feed
-        async function refreshFeed() {
-            if (!selectedCategory && !selectedKeyword) {
-                alert('Selecione uma categoria ou palavra-chave primeiro!');
-                return;
-            }
-            
-            const refreshBtn = document.getElementById('refreshBtn');
-            refreshBtn.disabled = true;
-            refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Carregando...';
-            
-            try {
-                // Buscar dados
-                const feedData = await fetchNews();
-                currentFeedData = feedData;
-                displayFeedPreview(feedData);
-                
-            } catch (error) {
-                console.error('Erro ao buscar notícias:', error);
-                // Usar dados de exemplo em caso de erro
-                const mockData = generateMockData();
-                currentFeedData = mockData;
-                displayFeedPreview(mockData);
-                alert('Usando dados de exemplo. O sistema está funcionando, mas usando conteúdo simulado.');
-            } finally {
-                refreshBtn.disabled = false;
-                refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Atualizar Feed';
-            }
-        }
-        
         // Download do feed
         function downloadFeed() {
             if (!currentFeedData) {
@@ -898,6 +565,19 @@
                 URL.revokeObjectURL(url);
             }, 100);
         }
+        
+        // Verificar se há parâmetros na URL ao carregar a página
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('category')) {
+                const category = urlParams.get('category');
+                selectCategory(category);
+            } else if (urlParams.has('keyword')) {
+                const keyword = urlParams.get('keyword');
+                document.getElementById('keywordInput').value = keyword;
+                searchByKeyword();
+            }
+        });
     </script>
 </body>
 </html>
