@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Feed de Notícias - Últimas 12h</title>
+    <title>Feed de Notícias - Studio RS Ilhabela</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -45,11 +45,21 @@
             opacity: 0.9;
         }
         
+        .logo {
+            margin-bottom: 15px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #fff;
+            background: rgba(0, 0, 0, 0.2);
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+        }
+        
         .controls {
             display: flex;
             flex-wrap: wrap;
-            justify-content: space-between;
-            align-items: center;
+            justify-content: center;
             gap: 15px;
             margin-bottom: 25px;
             background: white;
@@ -58,88 +68,23 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
         }
         
-        .search-section {
-            display: flex;
-            flex: 1;
-            min-width: 300px;
-        }
-        
-        .search-input {
-            flex: 1;
-            padding: 12px 20px;
+        .category-btn {
+            background: white;
             border: 2px solid #0061ff;
-            border-radius: 50px 0 0 50px;
-            font-size: 1rem;
-            outline: none;
-        }
-        
-        .search-btn {
-            background: #0061ff;
-            color: white;
-            border: none;
-            padding: 0 25px;
-            border-radius: 0 50px 50px 0;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-        
-        .search-btn:hover {
-            background: #0040ff;
-        }
-        
-        .filter-section {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            align-items: center;
-        }
-        
-        .time-filter {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .time-filter select {
-            padding: 10px 15px;
-            border: 2px solid #0061ff;
-            border-radius: 50px;
-            font-size: 1rem;
-            outline: none;
-        }
-        
-        .feed-config {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            align-items: center;
-        }
-        
-        .feed-type {
-            display: flex;
-            gap: 10px;
-        }
-        
-        .feed-type input[type="radio"] {
-            display: none;
-        }
-        
-        .feed-type label {
-            padding: 8px 16px;
-            border: 2px solid #0061ff;
+            color: #0061ff;
+            padding: 10px 20px;
             border-radius: 50px;
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s ease;
         }
         
-        .feed-type input[type="radio"]:checked + label {
+        .category-btn:hover, .category-btn.active {
             background: #0061ff;
             color: white;
         }
         
-        .generate-btn {
+        .refresh-btn {
             background: #00c853;
             color: white;
             border: none;
@@ -153,62 +98,9 @@
             transition: all 0.3s ease;
         }
         
-        .generate-btn:hover {
+        .refresh-btn:hover {
             background: #009624;
             transform: scale(1.05);
-        }
-        
-        .feed-url-section {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-            margin-bottom: 25px;
-            display: none;
-        }
-        
-        .feed-url-section h3 {
-            margin-bottom: 15px;
-            color: #0061ff;
-        }
-        
-        .url-container {
-            display: flex;
-            gap: 10px;
-        }
-        
-        .url-input {
-            flex: 1;
-            padding: 12px 20px;
-            border: 2px solid #0061ff;
-            border-radius: 50px;
-            font-size: 1rem;
-            background: #f5f7fa;
-        }
-        
-        .copy-btn {
-            background: #0061ff;
-            color: white;
-            border: none;
-            padding: 0 25px;
-            border-radius: 50px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-        
-        .copy-btn:hover {
-            background: #0040ff;
-        }
-        
-        .auto-update {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-top: 15px;
-            padding: 10px;
-            background: #f0f7ff;
-            border-radius: 8px;
         }
         
         .news-grid {
@@ -317,6 +209,11 @@
             border-top: 1px solid #ddd;
         }
         
+        .developer {
+            font-weight: bold;
+            color: #0061ff;
+        }
+        
         @media (max-width: 768px) {
             .news-grid {
                 grid-template-columns: 1fr;
@@ -325,161 +222,106 @@
             header h1 {
                 font-size: 2rem;
             }
-            
-            .controls {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            
-            .search-section {
-                width: 100%;
-            }
-            
-            .url-container {
-                flex-direction: column;
-            }
-            
-            .copy-btn {
-                width: 100%;
-                padding: 12px;
-            }
         }
     </style>
 </head>
 <body>
     <header>
         <div class="container">
-            <h1><i class="fas fa-rss"></i> Feed de Notícias - Últimas 12h</h1>
-            <p>Gere feeds RSS/JSON com notícias das últimas 12 horas</p>
+            <div class="logo">Studio RS Ilhabela</div>
+            <h1><i class="fas fa-newspaper"></i> Feed de Notícias</h1>
+            <p>Fique por dentro das últimas notícias</p>
         </div>
     </header>
     
     <div class="container">
         <div class="controls">
-            <div class="search-section">
-                <input type="text" class="search-input" id="search-input" placeholder="Digite palavras-chave...">
-                <button class="search-btn" id="search-btn">
-                    <i class="fas fa-search"></i>
-                </button>
-            </div>
-            
-            <div class="filter-section">
-                <div class="time-filter">
-                    <label for="time-range">Período:</label>
-                    <select id="time-range">
-                        <option value="12">Últimas 12 horas</option>
-                        <option value="24">Últimas 24 horas</option>
-                        <option value="48">Últimas 48 horas</option>
-                    </select>
-                </div>
-            </div>
-            
-            <div class="feed-config">
-                <div class="feed-type">
-                    <input type="radio" id="rss-format" name="feed-format" value="rss" checked>
-                    <label for="rss-format">RSS</label>
-                    <input type="radio" id="json-format" name="feed-format" value="json">
-                    <label for="json-format">JSON</label>
-                </div>
-                
-                <button class="generate-btn" id="generate-btn">
-                    <i class="fas fa-cog"></i> Gerar Feed
-                </button>
-            </div>
-        </div>
-        
-        <div class="feed-url-section" id="feed-url-section">
-            <h3>Seu Feed Personalizado</h3>
-            <div class="url-container">
-                <input type="text" class="url-input" id="feed-url" readonly>
-                <button class="copy-btn" id="copy-btn">
-                    <i class="fas fa-copy"></i> Copiar Link
-                </button>
-            </div>
-            <div class="auto-update">
-                <i class="fas fa-sync-alt"></i>
-                <span>Este feed é atualizado automaticamente</span>
-            </div>
+            <button class="category-btn active" data-url="https://news.google.com/rss/search?q=litoral%20norte%20de%20s%C3%A3o%20paulo%20when%3A1d&hl=pt-BR&gl=BR&ceid=BR%3Apt-419">Litoral Norte</button>
+            <button class="category-btn" data-url="https://news.google.com/rss/search?q=Brasil&hl=pt-BR&gl=BR&ceid=BR%3Apt-419">Brasil</button>
+            <button class="category-btn" data-url="https://news.google.com/rss/search?q=Mundo&hl=pt-BR&gl=BR&ceid=BR%3Apt-419">Mundo</button>
+            <button class="category-btn" data-url="https://news.google.com/rss/search?q=Esportes&hl=pt-BR&gl=BR&ceid=BR%3Apt-419">Esportes</button>
+            <button class="refresh-btn" id="refresh-btn">
+                <i class="fas fa-sync-alt"></i> Atualizar Notícias
+            </button>
         </div>
         
         <div id="news-container">
             <div class="loading">
                 <i class="fas fa-spinner fa-spin"></i>
-                <p>Digite uma palavra-chave e clique em "Gerar Feed" para começar</p>
+                <p>Carregando notícias do Litoral Norte...</p>
             </div>
         </div>
     </div>
     
     <footer>
         <div class="container">
-            <p>Feed de Notícias &copy; 2023 - Desenvolvido com <i class="fas fa-heart" style="color: #d32f2f;"></i></p>
+            <p>Feed de Notícias &copy; 2023 - Desenvolvido por: <span class="developer">Studio RS Ilhabela</span></p>
         </div>
     </footer>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const newsContainer = document.getElementById('news-container');
-            const searchBtn = document.getElementById('search-btn');
-            const searchInput = document.getElementById('search-input');
-            const generateBtn = document.getElementById('generate-btn');
-            const feedUrlSection = document.getElementById('feed-url-section');
-            const feedUrlInput = document.getElementById('feed-url');
-            const copyBtn = document.getElementById('copy-btn');
-            const formatRadios = document.querySelectorAll('input[name="feed-format"]');
-            const timeRangeSelect = document.getElementById('time-range');
+            const refreshBtn = document.getElementById('refresh-btn');
+            const categoryBtns = document.querySelectorAll('.category-btn');
             
-            let currentNews = [];
-            let currentKeyword = '';
-            let currentFormat = 'rss';
+            let currentUrl = 'https://news.google.com/rss/search?q=litoral%20norte%20de%20s%C3%A3o%20paulo%20when%3A1d&hl=pt-BR&gl=BR&ceid=BR%3Apt-419';
             
-            // Sua chave da API NewsAPI
-            const API_KEY = '52765fac5f45400591205d8a82af7bee';
-            
-            // Função para calcular a data de X horas atrás em formato ISO
-            function getHoursAgo(hours) {
-                const date = new Date();
-                date.setHours(date.getHours() - hours);
-                return date.toISOString().split('.')[0]; // Formato: YYYY-MM-DDTHH:MM:SS
-            }
-            
-            // Função para buscar notícias das últimas X horas
-            async function fetchNews(keyword, hours = 12) {
+            // Função para buscar notícias do Google RSS
+            async function fetchNews(rssUrl) {
                 newsContainer.innerHTML = `
                     <div class="loading">
                         <i class="fas fa-spinner fa-spin"></i>
-                        <p>Buscando notícias para: ${keyword}...</p>
+                        <p>Carregando notícias...</p>
                     </div>
                 `;
                 
                 try {
-                    const fromDate = getHoursAgo(hours);
-                    // Montar a URL da API com filtro de tempo
-                    const apiUrl = `https://newsapi.org/v2/everything?q=${encodeURIComponent(keyword)}&from=${fromDate}&language=pt&sortBy=publishedAt&pageSize=20&apiKey=${API_KEY}`;
-                    
-                    // Usar um proxy para contornar CORS
+                    // Usar um proxy para contornar problemas de CORS
                     const proxyUrl = 'https://api.allorigins.win/raw?url=';
-                    const response = await fetch(proxyUrl + encodeURIComponent(apiUrl));
+                    const response = await fetch(proxyUrl + encodeURIComponent(rssUrl));
                     
                     if (!response.ok) {
-                        throw new Error('Falha ao carregar notícias da API');
+                        throw new Error('Falha ao carregar notícias');
                     }
                     
-                    const data = await response.json();
+                    const xmlText = await response.text();
+                    const parser = new DOMParser();
+                    const xmlDoc = parser.parseFromString(xmlText, "text/xml");
                     
-                    if (data.articles && data.articles.length > 0) {
-                        currentNews = data.articles;
-                        displayNews(currentNews);
-                    } else {
-                        throw new Error('Nenhuma notícia encontrada para esta palavra-chave no período selecionado');
-                    }
+                    // Extrair itens do RSS
+                    const items = xmlDoc.querySelectorAll('item');
+                    const articles = [];
+                    
+                    items.forEach(item => {
+                        const title = item.querySelector('title').textContent;
+                        const link = item.querySelector('link').textContent;
+                        const description = item.querySelector('description')?.textContent || '';
+                        const pubDate = item.querySelector('pubDate')?.textContent || '';
+                        const source = item.querySelector('source')?.textContent || 'Google News';
+                        
+                        articles.push({
+                            title,
+                            url: link,
+                            description,
+                            publishedAt: pubDate,
+                            source: { name: source }
+                        });
+                    });
+                    
+                    displayNews(articles);
                 } catch (error) {
                     console.error(error);
                     newsContainer.innerHTML = `
                         <div class="error">
                             <i class="fas fa-exclamation-triangle"></i>
                             <p>${error.message}</p>
+                            <p>Tentando novamente em 5 segundos...</p>
                         </div>
                     `;
+                    
+                    // Tentar novamente após 5 segundos
+                    setTimeout(() => fetchNews(currentUrl), 5000);
                 }
             }
             
@@ -488,19 +330,20 @@
                 let newsHTML = '';
                 
                 articles.forEach(article => {
-                    if (!article.title || article.title === '[Removed]') return;
+                    // Verificar se a notícia tem conteúdo válido
+                    if (!article.title) return;
                     
                     newsHTML += `
                         <div class="news-card">
-                            <img src="${article.urlToImage || 'https://placehold.co/600x400/0061ff/white?text=Tech+News'}" 
+                            <img src="https://placehold.co/600x400/0061ff/white?text=Notícia" 
                                  alt="${article.title}" class="news-image">
                             <div class="news-content">
                                 <div class="news-source">
                                     <span class="source-name">${article.source.name || 'Fonte'}</span>
-                                    <span class="news-date">${new Date(article.publishedAt).toLocaleDateString('pt-BR')}</span>
+                                    <span class="news-date">${formatDate(article.publishedAt)}</span>
                                 </div>
                                 <h3 class="news-title">${article.title}</h3>
-                                <p class="news-description">${article.description || 'Clique em "Leia mais" para ver a notícia completa.'}</p>
+                                <p class="news-description">${truncateText(article.description || 'Clique em "Leia mais" para ver a notícia completa.', 120)}</p>
                                 <a href="${article.url}" target="_blank" class="read-more">Leia mais <i class="fas fa-arrow-right"></i></a>
                             </div>
                         </div>
@@ -511,7 +354,7 @@
                     newsContainer.innerHTML = `
                         <div class="error">
                             <i class="fas fa-exclamation-circle"></i>
-                            <p>Nenhuma notícia disponível no momento. Tente outra palavra-chave.</p>
+                            <p>Nenhuma notícia disponível no momento. Tente novamente mais tarde.</p>
                         </div>
                     `;
                 } else {
@@ -519,154 +362,40 @@
                 }
             }
             
-            // Função para gerar feed RSS
-            function generateRss(keyword, articles) {
-                let rss = `<?xml version="1.0" encoding="UTF-8" ?>
-<rss version="2.0">
-<channel>
-    <title>Notícias sobre ${keyword} - Últimas 12h</title>
-    <link>${window.location.href}</link>
-    <description>Feed de notícias sobre ${keyword} das últimas 12 horas</description>
-    <language>pt-br</language>`;
+            // Função para formatar a data
+            function formatDate(dateString) {
+                if (!dateString) return 'Data não disponível';
                 
-                articles.forEach(article => {
-                    if (!article.title || article.title === '[Removed]') return;
-                    
-                    rss += `
-    <item>
-        <title>${escapeXml(article.title)}</title>
-        <link>${article.url}</link>
-        <description>${escapeXml(article.description || '')}</description>
-        <pubDate>${new Date(article.publishedAt).toUTCString()}</pubDate>
-        <source url="${article.url}">${escapeXml(article.source.name || 'Fonte')}</source>
-    </item>`;
-                });
-                
-                rss += `
-</channel>
-</rss>`;
-                
-                return rss;
+                try {
+                    const date = new Date(dateString);
+                    return date.toLocaleDateString('pt-BR');
+                } catch (e) {
+                    return dateString;
+                }
             }
             
-            // Função para gerar feed JSON
-            function generateJson(keyword, articles) {
-                const feed = {
-                    version: "https://jsonfeed.org/version/1.1",
-                    title: `Notícias sobre ${keyword} - Últimas 12h`,
-                    home_page_url: window.location.href,
-                    feed_url: "#",
-                    description: `Feed de notícias sobre ${keyword} das últimas 12 horas`,
-                    items: articles.map(article => {
-                        if (!article.title || article.title === '[Removed]') return null;
-                        
-                        return {
-                            id: article.url,
-                            url: article.url,
-                            title: article.title,
-                            content_text: article.description,
-                            date_published: article.publishedAt,
-                            image: article.urlToImage,
-                            author: article.source.name
-                        };
-                    }).filter(item => item !== null)
-                };
-                
-                return feed;
+            // Função para truncar texto
+            function truncateText(text, maxLength) {
+                if (text.length <= maxLength) return text;
+                return text.substr(0, maxLength) + '...';
             }
-            
-            // Função para escapar caracteres XML
-            function escapeXml(unsafe) {
-                return unsafe.replace(/[<>&'"]/g, function (c) {
-                    switch (c) {
-                        case '<': return '&lt;';
-                        case '>': return '&gt;';
-                        case '&': return '&amp;';
-                        case '\'': return '&apos;';
-                        case '"': return '&quot;';
-                    }
-                });
-            }
-            
-            // Event listeners para formatos
-            formatRadios.forEach(radio => {
-                radio.addEventListener('change', () => {
-                    currentFormat = radio.value;
-                });
-            });
             
             // Event listeners
-            searchBtn.addEventListener('click', () => {
-                const keyword = searchInput.value.trim();
-                const hours = parseInt(timeRangeSelect.value);
-                
-                if (keyword) {
-                    currentKeyword = keyword;
-                    fetchNews(keyword, hours);
-                }
+            refreshBtn.addEventListener('click', () => {
+                fetchNews(currentUrl);
             });
             
-            searchInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    const keyword = searchInput.value.trim();
-                    const hours = parseInt(timeRangeSelect.value);
-                    
-                    if (keyword) {
-                        currentKeyword = keyword;
-                        fetchNews(keyword, hours);
-                    }
-                }
+            categoryBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    categoryBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentUrl = btn.dataset.url;
+                    fetchNews(currentUrl);
+                });
             });
             
-            generateBtn.addEventListener('click', () => {
-                const keyword = searchInput.value.trim();
-                const hours = parseInt(timeRangeSelect.value);
-                
-                if (keyword) {
-                    currentKeyword = keyword;
-                    
-                    // Primeiro buscar as notícias
-                    fetchNews(keyword, hours).then(() => {
-                        // Gerar o feed no formato selecionado
-                        let feedContent, mimeType, fileExtension;
-                        
-                        if (currentFormat === 'rss') {
-                            feedContent = generateRss(keyword, currentNews);
-                            mimeType = 'application/rss+xml';
-                            fileExtension = 'rss';
-                        } else {
-                            feedContent = generateJson(keyword, currentNews);
-                            mimeType = 'application/json';
-                            fileExtension = 'json';
-                            feedContent = JSON.stringify(feedContent, null, 2);
-                        }
-                        
-                        // Criar um blob e URL para download
-                        const blob = new Blob([feedContent], { type: mimeType });
-                        const url = URL.createObjectURL(blob);
-                        
-                        // Atualizar a URL do feed para download
-                        feedUrlInput.value = url;
-                        feedUrlSection.style.display = 'block';
-                        
-                        // Atualizar o link para fazer o download
-                        copyBtn.onclick = () => {
-                            // Criar um link temporário para download
-                            const a = document.createElement('a');
-                            a.href = url;
-                            a.download = `noticias_${keyword}.${fileExtension}`;
-                            document.body.appendChild(a);
-                            a.click();
-                            document.body.removeChild(a);
-                            
-                            alert('Download do feed iniciado!');
-                        };
-                    });
-                    
-                } else {
-                    alert('Por favor, digite uma palavra-chave primeiro');
-                }
-            });
+            // Carregar notícias inicialmente
+            fetchNews(currentUrl);
         });
     </script>
 </body>
