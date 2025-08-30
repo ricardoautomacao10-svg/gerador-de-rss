@@ -245,6 +245,9 @@
             const categoryBtns = document.querySelectorAll('.category-btn');
             let currentCategory = 'technology';
             
+            // Sua chave da API NewsAPI
+            const apiKey = '52765fac5f45400591205d8a82af7bee';
+            
             // Função para buscar notícias
             async function fetchNews(category = 'technology') {
                 newsContainer.innerHTML = `
@@ -255,23 +258,21 @@
                 `;
                 
                 try {
-                    // Usando uma API pública de notícias (NewsAPI)
-                    // Nota: Em produção, você precisaria usar uma chave API própria
-                    const apiKey = 'dfa38bcf6c6a4a5a857aac9f9bf9c94a'; // Chave de exemplo (pode não funcionar)
-                    const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-                    const apiUrl = `https://newsapi.org/v2/top-headlines?category=technology&q=${category}&language=pt&pageSize=12&apiKey=${apiKey}`;
+                    // Construindo a URL da API com sua chave
+                    let apiUrl;
                     
-                    // Alternativa caso a NewsAPI não funcione
-                    const alternativeUrl = `https://newsapi.org/v2/everything?q=${category}+tecnologia&language=pt&sortBy=publishedAt&pageSize=12&apiKey=${apiKey}`;
-                    
-                    let response = await fetch(proxyUrl + apiUrl);
-                    
-                    if (!response.ok) {
-                        response = await fetch(proxyUrl + alternativeUrl);
+                    if (category === 'technology') {
+                        apiUrl = `https://newsapi.org/v2/top-headlines?category=technology&language=pt&pageSize=12&apiKey=${apiKey}`;
+                    } else {
+                        apiUrl = `https://newsapi.org/v2/everything?q=${category}+tecnologia&language=pt&sortBy=publishedAt&pageSize=12&apiKey=${apiKey}`;
                     }
                     
+                    // Usando um proxy para contornar problemas de CORS
+                    const proxyUrl = 'https://corsproxy.io/?';
+                    const response = await fetch(proxyUrl + encodeURIComponent(apiUrl));
+                    
                     if (!response.ok) {
-                        throw new Error('Falha ao carregar notícias. Usando dados de exemplo.');
+                        throw new Error('Falha ao carregar notícias da API');
                     }
                     
                     const data = await response.json();
@@ -279,12 +280,20 @@
                     if (data.articles && data.articles.length > 0) {
                         displayNews(data.articles);
                     } else {
-                        throw new Error('Nenhuma notícia encontrada. Usando dados de exemplo.');
+                        throw new Error('Nenhuma notícia encontrada para esta categoria');
                     }
                 } catch (error) {
                     console.error(error);
-                    // Exibir notícias de exemplo em caso de erro
-                    displaySampleNews();
+                    newsContainer.innerHTML = `
+                        <div class="error">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <p>${error.message}</p>
+                            <p>Tentando novamente em 5 segundos...</p>
+                        </div>
+                    `;
+                    
+                    // Tentar novamente após 5 segundos
+                    setTimeout(() => fetchNews(currentCategory), 5000);
                 }
             }
             
@@ -293,6 +302,9 @@
                 let newsHTML = '';
                 
                 articles.forEach(article => {
+                    // Verificar se a notícia tem conteúdo válido
+                    if (!article.title || article.title === '[Removed]') return;
+                    
                     newsHTML += `
                         <div class="news-card">
                             <img src="${article.urlToImage || 'https://placehold.co/600x400/0061ff/white?text=Tech+News'}" 
@@ -310,72 +322,16 @@
                     `;
                 });
                 
-                newsContainer.innerHTML = `<div class="news-grid">${newsHTML}</div>`;
-            }
-            
-            // Função para exibir notícias de exemplo (fallback)
-            function displaySampleNews() {
-                const sampleNews = [
-                    {
-                        title: "Inteligência Artificial revoluciona setor de saúde",
-                        description: "Novos algoritmos de IA estão sendo usados para diagnosticar doenças com precisão nunca antes vista.",
-                        url: "#",
-                        urlToImage: "https://placehold.co/600x400/0061ff/white?text=IA+Saúde",
-                        source: { name: "Tech News" },
-                        publishedAt: new Date().toISOString()
-                    },
-                    {
-                        title: "Google anuncia novo smartphone Pixel com recursos inovadores",
-                        description: "O novo dispositivo conta com câmera de última geração e processador desenvolvido pela própria Google.",
-                        url: "#",
-                        urlToImage: "https://placehold.co/600x400/ea4335/white?text=Google+Pixel",
-                        source: { name: "Tech Blog" },
-                        publishedAt: new Date().toISOString()
-                    },
-                    {
-                        title: "Microsoft lança novo Windows com foco em produtividade",
-                        description: "A nova versão do sistema operacional traz ferramentas de produtividade integradas e interface redesenhada.",
-                        url: "#",
-                        urlToImage: "https://placehold.co/600x400/0078d4/white?text=Windows+11",
-                        source: { name: "Tech Daily" },
-                        publishedAt: new Date().toISOString()
-                    },
-                    {
-                        title: "Apple revelar novo iPad Pro com chip M2",
-                        description: "O novo tablet da Apple promete performance comparable a notebooks de alta performance.",
-                        url: "#",
-                        urlToImage: "https://placehold.co/600x400/000000/white?text=iPad+Pro",
-                        source: { name: "Apple News" },
-                        publishedAt: new Date().toISOString()
-                    },
-                    {
-                        title: "5G chega a mais capitais brasileiras",
-                        description: "A tecnologia de quinta geração promete revolucionar a forma como nos conectamos.",
-                        url: "#",
-                        urlToImage: "https://placehold.co/600x400/00c853/white?text=Rede+5G",
-                        source: { name: "Connect Tech" },
-                        publishedAt: new Date().toISOString()
-                    },
-                    {
-                        title: "Realidade Virtual avança com novos headsets",
-                        description: "Novos dispositivos de VR prometem experiências imersivas para games e trabalho.",
-                        url: "#",
-                        urlToImage: "https://placehold.co/600x400/7b1fa2/white?text=Realidade+Virtual",
-                        source: { name: "VR Magazine" },
-                        publishedAt: new Date().toISOString()
-                    }
-                ];
-                
-                displayNews(sampleNews);
-                
-                // Adicionar mensagem informativa
-                newsContainer.innerHTML += `
-                    <div class="error">
-                        <i class="fas fa-info-circle"></i>
-                        <p>Não foi possível carregar notícias em tempo real. Exibindo notícias de exemplo.</p>
-                        <p>Para ver notícias reais, configure uma chave API válida em newsapi.org</p>
-                    </div>
-                `;
+                if (newsHTML === '') {
+                    newsContainer.innerHTML = `
+                        <div class="error">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <p>Nenhuma notícia disponível no momento. Tente novamente mais tarde.</p>
+                        </div>
+                    `;
+                } else {
+                    newsContainer.innerHTML = `<div class="news-grid">${newsHTML}</div>`;
+                }
             }
             
             // Event listeners
