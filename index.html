@@ -3,580 +3,397 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Feed de Notícias - Funcionando Imediatamente</title>
+    <title>Feed de Notícias de Tecnologia</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --primary-color: #2563eb;
-            --secondary-color: #3b82f6;
-            --accent-color: #ef4444;
-            --background-color: #f8fafc;
-            --text-color: #1e293b;
-            --light-text: #64748b;
-            --card-bg: #ffffff;
-            --border-color: #e2e8f0;
-            --success-color: #10b981;
-        }
-        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         body {
-            background-color: var(--background-color);
-            color: var(--text-color);
+            background-color: #f5f7fa;
+            color: #333;
             line-height: 1.6;
-            padding: 20px;
-            min-height: 100vh;
         }
         
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            background: var(--card-bg);
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-            overflow: hidden;
+            padding: 20px;
         }
         
         header {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            background: linear-gradient(135deg, #0061ff, #60efff);
             color: white;
-            padding: 30px;
+            padding: 25px 0;
             text-align: center;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
         }
         
-        h1 {
+        header h1 {
             font-size: 2.5rem;
             margin-bottom: 10px;
         }
         
-        .tagline {
+        header p {
             font-size: 1.1rem;
             opacity: 0.9;
         }
         
-        .main-content {
-            padding: 30px;
-        }
-        
-        .card {
-            background-color: var(--card-bg);
-            border-radius: 16px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-            padding: 25px;
-            margin-bottom: 25px;
-            border: 1px solid var(--border-color);
-        }
-        
-        .card-title {
-            font-size: 1.5rem;
-            margin-bottom: 20px;
-            color: var(--primary-color);
-            padding-bottom: 10px;
+        .controls {
             display: flex;
-            align-items: center;
-            gap: 10px;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
         }
         
-        .categories-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-        
-        .category-card {
+        .category-btn {
             background: white;
-            border-radius: 12px;
-            padding: 25px;
-            text-align: center;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s ease;
+            border: 2px solid #0061ff;
+            color: #0061ff;
+            padding: 10px 20px;
+            border-radius: 50px;
             cursor: pointer;
-            border: 1px solid var(--border-color);
-        }
-        
-        .category-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
-        }
-        
-        .category-icon {
-            font-size: 2.8rem;
-            margin-bottom: 15px;
-            color: var(--primary-color);
-        }
-        
-        .category-card h3 {
-            margin-bottom: 10px;
-            color: var(--primary-color);
-        }
-        
-        .category-card p {
-            color: var(--light-text);
-            font-size: 0.95rem;
-        }
-        
-        .result-container {
-            margin-top: 20px;
-            padding: 25px;
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            background-color: #f8fafc;
-        }
-        
-        .feed-url {
-            word-break: break-all;
-            padding: 18px;
-            background-color: #e0f2fe;
-            border-radius: 8px;
-            margin: 15px 0;
-            font-family: 'Fira Code', monospace;
-            border-left: 4px solid var(--primary-color);
-            font-size: 15px;
-        }
-        
-        .feed-preview {
-            margin-top: 20px;
-            max-height: 500px;
-            overflow-y: auto;
-            padding: 20px;
-            background-color: #f8fafc;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-        }
-        
-        .feed-item {
-            margin-bottom: 20px;
-            padding: 20px;
-            background-color: white;
-            border-radius: 10px;
-            border-left: 4px solid var(--primary-color);
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
-        }
-        
-        .feed-item h3 {
-            color: var(--primary-color);
-            margin-bottom: 12px;
-        }
-        
-        .feed-item img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 8px;
-            margin: 10px 0;
-        }
-        
-        .feed-item .description {
-            color: var(--light-text);
-            margin-bottom: 12px;
-        }
-        
-        .feed-item .link {
-            color: var(--primary-color);
-            text-decoration: none;
             font-weight: 600;
+            transition: all 0.3s ease;
         }
         
-        button {
-            background-color: var(--primary-color);
+        .category-btn:hover, .category-btn.active {
+            background: #0061ff;
+            color: white;
+        }
+        
+        .refresh-btn {
+            background: #00c853;
             color: white;
             border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
+            padding: 10px 20px;
+            border-radius: 50px;
             cursor: pointer;
-            font-size: 16px;
             font-weight: 600;
-            margin-right: 10px;
-            margin-bottom: 10px;
-            display: inline-flex;
+            display: flex;
             align-items: center;
             gap: 8px;
+            transition: all 0.3s ease;
         }
         
-        button:hover {
-            background-color: var(--secondary-color);
+        .refresh-btn:hover {
+            background: #009624;
+            transform: scale(1.05);
         }
         
-        .btn-success {
-            background-color: var(--success-color);
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
         }
         
-        .keyword-search {
-            background-color: #f0f9ff;
-            padding: 25px;
+        .news-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .news-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+        
+        .news-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 3px solid #0061ff;
+        }
+        
+        .news-content {
+            padding: 20px;
+        }
+        
+        .news-source {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .source-name {
+            font-weight: 600;
+            color: #0061ff;
+        }
+        
+        .news-date {
+            color: #888;
+        }
+        
+        .news-title {
+            font-size: 1.3rem;
+            margin-bottom: 12px;
+            color: #222;
+        }
+        
+        .news-description {
+            color: #555;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        
+        .read-more {
+            display: inline-block;
+            color: #0061ff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+        
+        .read-more:hover {
+            color: #0040ff;
+            text-decoration: underline;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 1.2rem;
+            color: #666;
+        }
+        
+        .loading i {
+            display: block;
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: #0061ff;
+        }
+        
+        .error {
+            text-align: center;
+            padding: 40px;
+            color: #d32f2f;
+            background: #ffebee;
             border-radius: 12px;
             margin: 20px 0;
         }
         
-        .keyword-input {
-            width: 100%;
-            padding: 14px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            margin: 10px 0;
-            font-size: 16px;
-        }
-        
         footer {
             text-align: center;
-            padding: 25px;
-            color: var(--light-text);
-            border-top: 1px solid var(--border-color);
+            margin-top: 50px;
+            padding: 20px;
+            color: #666;
+            border-top: 1px solid #ddd;
         }
         
         @media (max-width: 768px) {
-            .categories-grid {
+            .news-grid {
                 grid-template-columns: 1fr;
             }
             
-            button {
-                width: 100%;
-                margin-right: 0;
+            header h1 {
+                font-size: 2rem;
             }
         }
     </style>
 </head>
 <body>
+    <header>
+        <div class="container">
+            <h1><i class="fas fa-newspaper"></i> Feed de Notícias de Tecnologia</h1>
+            <p>Fique por dentro das últimas notícias do mundo tech</p>
+        </div>
+    </header>
+    
     <div class="container">
-        <header>
-            <h1>Feed de Notícias Automático</h1>
-            <p class="tagline">Sistema pronto para uso imediato - sem configuração necessária</p>
-        </header>
-        
-        <div class="main-content">
-            <div class="card">
-                <h2 class="card-title"><i class="fas fa-search"></i> Buscar por Palavra-Chave</h2>
-                <p>Digite uma palavra-chave para buscar notícias específicas:</p>
-                
-                <input type="text" id="keywordInput" class="keyword-input" placeholder="Ex: Ilhabela, tecnologia, esportes">
-                
-                <button onclick="searchByKeyword()"><i class="fas fa-search"></i> Buscar Notícias</button>
-            </div>
-            
-            <div class="card">
-                <h2 class="card-title"><i class="fas fa-layer-group"></i> Categorias Disponíveis</h2>
-                <p>Selecione uma categoria para gerar um feed automático:</p>
-                
-                <div class="categories-grid">
-                    <div class="category-card" onclick="selectCategory('technology')">
-                        <div class="category-icon"><i class="fas fa-laptop-code"></i></div>
-                        <h3>Tecnologia</h3>
-                        <p>Notícias sobre inovações tecnológicas</p>
-                    </div>
-                    
-                    <div class="category-card" onclick="selectCategory('business')">
-                        <div class="category-icon"><i class="fas fa-chart-line"></i></div>
-                        <h3>Negócios</h3>
-                        <p>Mercado financeiro e empresas</p>
-                    </div>
-                    
-                    <div class="category-card" onclick="selectCategory('entertainment')">
-                        <div class="category-icon"><i class="fas fa-film"></i></div>
-                        <h3>Entretenimento</h3>
-                        <p>Cinema, TV e celebridades</p>
-                    </div>
-                    
-                    <div class="category-card" onclick="selectCategory('health')">
-                        <div class="category-icon"><i class="fas fa-heartbeat"></i></div>
-                        <h3>Saúde</h3>
-                        <p>Notícias sobre saúde e bem-estar</p>
-                    </div>
-                    
-                    <div class="category-card" onclick="selectCategory('science')">
-                        <div class="category-icon"><i class="fas fa-flask"></i></div>
-                        <h3>Ciência</h3>
-                        <p>Descobertas e pesquisas científicas</p>
-                    </div>
-                    
-                    <div class="category-card" onclick="selectCategory('sports')">
-                        <div class="category-icon"><i class="fas fa-running"></i></div>
-                        <h3>Esportes</h3>
-                        <p>Todas as modalidades esportivas</p>
-                    </div>
-                </div>
-                
-                <div class="result-container">
-                    <h3><i class="fas fa-rss"></i> Feed Gerado:</h3>
-                    <div class="feed-url" id="feedUrl">
-                        Nenhuma categoria ou palavra-chave selecionada. Clique em uma categoria ou busque por palavra-chave para gerar o feed.
-                    </div>
-                    <button onclick="copyFeedUrl()"><i class="fas fa-copy"></i> Copiar URL do Feed</button>
-                    <button onclick="testFeed()" class="btn-success"><i class="fas fa-play"></i> Testar Feed</button>
-                    <button onclick="downloadFeed()"><i class="fas fa-download"></i> Download do Feed</button>
-                </div>
-            </div>
-            
-            <div class="card">
-                <h2 class="card-title"><i class="fas fa-eye"></i> Visualização do Feed</h2>
-                
-                <div class="feed-preview" id="feedPreview">
-                    <p>O conteúdo do feed aparecerá aqui após selecionar uma categoria ou buscar por palavra-chave.</p>
-                </div>
-            </div>
+        <div class="controls">
+            <button class="category-btn active" data-category="technology">Tecnologia</button>
+            <button class="category-btn" data-category="apple">Apple</button>
+            <button class="category-btn" data-category="google">Google</button>
+            <button class="category-btn" data-category="microsoft">Microsoft</button>
+            <button class="refresh-btn" id="refresh-btn">
+                <i class="fas fa-sync-alt"></i> Atualizar Notícias
+            </button>
         </div>
         
-        <footer>
-            <p>Gerador de Feeds Automático - Sistema Pronto para Uso &copy; 2023</p>
-        </footer>
+        <div id="news-container">
+            <div class="loading">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Carregando notícias...</p>
+            </div>
+        </div>
     </div>
+    
+    <footer>
+        <div class="container">
+            <p>Feed de Notícias de Tecnologia &copy; 2023 - Desenvolvido com <i class="fas fa-heart" style="color: #d32f2f;"></i></p>
+        </div>
+    </footer>
 
     <script>
-        // Variáveis globais
-        let selectedCategory = null;
-        let selectedKeyword = null;
-        let currentFeedData = null;
-        
-        // Selecionar uma categoria
-        function selectCategory(category) {
-            selectedCategory = category;
-            selectedKeyword = null;
+        document.addEventListener('DOMContentLoaded', function() {
+            const newsContainer = document.getElementById('news-container');
+            const refreshBtn = document.getElementById('refresh-btn');
+            const categoryBtns = document.querySelectorAll('.category-btn');
+            let currentCategory = 'technology';
             
-            // Destacar visualmente a categoria selecionada
-            document.querySelectorAll('.category-card').forEach(card => {
-                card.style.border = '1px solid var(--border-color)';
-            });
-            
-            event.currentTarget.style.border = '2px solid var(--primary-color)';
-            
-            // Gerar a URL do feed
-            const feedUrl = `${window.location.origin}${window.location.pathname}?category=${category}&format=json`;
-            
-            // Atualizar a interface
-            document.getElementById('feedUrl').textContent = feedUrl;
-            document.getElementById('feedUrl').style.fontWeight = 'bold';
-            
-            // Mostrar loading
-            document.getElementById('feedPreview').innerHTML = '<p><i class="fas fa-spinner fa-spin"></i> Carregando notícias...</p>';
-            
-            // Buscar e exibir conteúdo do feed
-            refreshFeed();
-        }
-        
-        // Buscar por palavra-chave
-        function searchByKeyword() {
-            const keyword = document.getElementById('keywordInput').value.trim();
-            
-            if (!keyword) {
-                alert('Por favor, digite uma palavra-chave para buscar');
-                return;
-            }
-            
-            selectedKeyword = keyword;
-            selectedCategory = null;
-            
-            // Remover destaque das categorias
-            document.querySelectorAll('.category-card').forEach(card => {
-                card.style.border = '1px solid var(--border-color)';
-            });
-            
-            // Gerar a URL do feed
-            const feedUrl = `${window.location.origin}${window.location.pathname}?keyword=${encodeURIComponent(keyword)}&format=json`;
-            
-            // Atualizar a interface
-            document.getElementById('feedUrl').textContent = feedUrl;
-            document.getElementById('feedUrl').style.fontWeight = 'bold';
-            
-            // Mostrar loading
-            document.getElementById('feedPreview').innerHTML = '<p><i class="fas fa-spinner fa-spin"></i> Buscando notícias...</p>';
-            
-            // Buscar e exibir conteúdo do feed
-            refreshFeed();
-        }
-        
-        // Buscar notícias usando API alternativa
-        async function fetchNews() {
-            // Esta API não requer chave e permite acesso frontend
-            let apiUrl = '';
-            
-            if (selectedCategory) {
-                // API para categorias
-                apiUrl = `https://newsapi.org/v2/top-headlines?category=${selectedCategory}&language=pt&apiKey=demo`;
-            } else if (selectedKeyword) {
-                // API para palavras-chave
-                apiUrl = `https://newsapi.org/v2/everything?q=${encodeURIComponent(selectedKeyword)}&language=pt&sortBy=publishedAt&apiKey=demo`;
-            }
-            
-            try {
-                // Tentar fazer a requisição
-                const response = await fetch(apiUrl);
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    
-                    // Formatar os dados para nosso feed
-                    return {
-                        title: selectedCategory 
-                            ? `Feed de Notícias - ${getCategoryName(selectedCategory)}`
-                            : `Feed de Notícias - ${selectedKeyword}`,
-                        description: selectedCategory
-                            ? `Feed automático com as últimas notícias sobre ${getCategoryName(selectedCategory)}`
-                            : `Feed automático com notícias sobre ${selectedKeyword}`,
-                        link: window.location.href,
-                        lastBuildDate: new Date().toISOString(),
-                        items: data.articles.slice(0, 10).map(article => ({
-                            title: article.title,
-                            description: article.description,
-                            link: article.url,
-                            image: article.urlToImage,
-                            pubDate: new Date(article.publishedAt).toISOString()
-                        }))
-                    };
-                }
-            } catch (error) {
-                console.error('Erro ao buscar notícias:', error);
-            }
-            
-            // Se falhar, usar dados de exemplo
-            return generateMockData();
-        }
-        
-        // Gerar dados de exemplo
-        function generateMockData() {
-            const title = selectedCategory 
-                ? `Feed de Notícias - ${getCategoryName(selectedCategory)}`
-                : `Feed de Notícias - ${selectedKeyword}`;
-                
-            const description = selectedCategory
-                ? `Feed automático com as últimas notícias sobre ${getCategoryName(selectedCategory)}`
-                : `Feed automático com notícias sobre ${selectedKeyword}`;
-            
-            return {
-                title: title,
-                description: description,
-                link: window.location.href,
-                lastBuildDate: new Date().toISOString(),
-                items: Array.from({ length: 5 }, (_, i) => ({
-                    title: `${title} - Notícia #${i + 1}`,
-                    description: `Esta é uma notícia de exemplo sobre ${selectedCategory ? getCategoryName(selectedCategory) : selectedKeyword}. Em uma implementação real, esta conteria conteúdo real.`,
-                    link: `https://exemplo.com/noticia-${i + 1}`,
-                    image: `https://picsum.photos/600/400?random=${i}`,
-                    pubDate: new Date(Date.now() - Math.floor(Math.random() * 12 * 60 * 60 * 1000)).toISOString()
-                }))
-            };
-        }
-        
-        // Obter nome amigável para a categoria
-        function getCategoryName(category) {
-            const names = {
-                'technology': 'Tecnologia',
-                'business': 'Negócios',
-                'entertainment': 'Entretenimento',
-                'health': 'Saúde',
-                'science': 'Ciência',
-                'sports': 'Esportes'
-            };
-            
-            return names[category] || category;
-        }
-        
-        // Exibir visualização do feed
-        function displayFeedPreview(feedData) {
-            const feedPreview = document.getElementById('feedPreview');
-            feedPreview.innerHTML = '';
-            
-            if (feedData.items.length === 0) {
-                feedPreview.innerHTML = '<p>Nenhuma notícia encontrada.</p>';
-                return;
-            }
-            
-            feedData.items.forEach(item => {
-                const itemElement = document.createElement('div');
-                itemElement.className = 'feed-item';
-                
-                let imageHtml = '';
-                if (item.image) {
-                    imageHtml = `<img src="${item.image}" alt="${item.title}">`;
-                }
-                
-                itemElement.innerHTML = `
-                    <h3>${item.title}</h3>
-                    <div class="description">${item.description || 'Sem descrição disponível'}</div>
-                    ${imageHtml}
-                    <div>
-                        <a href="${item.link}" class="link" target="_blank">Ver notícia completa</a> | 
-                        Publicado em: ${new Date(item.pubDate).toLocaleString()}
+            // Função para buscar notícias
+            async function fetchNews(category = 'technology') {
+                newsContainer.innerHTML = `
+                    <div class="loading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Carregando notícias de ${category}...</p>
                     </div>
                 `;
-                feedPreview.appendChild(itemElement);
-            });
-        }
-        
-        // Atualizar feed
-        async function refreshFeed() {
-            const feedData = await fetchNews();
-            currentFeedData = feedData;
-            displayFeedPreview(feedData);
-        }
-        
-        // Copiar URL do feed
-        function copyFeedUrl() {
-            const feedUrl = document.getElementById('feedUrl').textContent;
-            
-            if (feedUrl.includes('Nenhuma categoria')) {
-                alert('Selecione uma categoria ou palavra-chave primeiro!');
-                return;
+                
+                try {
+                    // Usando uma API pública de notícias (NewsAPI)
+                    // Nota: Em produção, você precisaria usar uma chave API própria
+                    const apiKey = 'dfa38bcf6c6a4a5a857aac9f9bf9c94a'; // Chave de exemplo (pode não funcionar)
+                    const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+                    const apiUrl = `https://newsapi.org/v2/top-headlines?category=technology&q=${category}&language=pt&pageSize=12&apiKey=${apiKey}`;
+                    
+                    // Alternativa caso a NewsAPI não funcione
+                    const alternativeUrl = `https://newsapi.org/v2/everything?q=${category}+tecnologia&language=pt&sortBy=publishedAt&pageSize=12&apiKey=${apiKey}`;
+                    
+                    let response = await fetch(proxyUrl + apiUrl);
+                    
+                    if (!response.ok) {
+                        response = await fetch(proxyUrl + alternativeUrl);
+                    }
+                    
+                    if (!response.ok) {
+                        throw new Error('Falha ao carregar notícias. Usando dados de exemplo.');
+                    }
+                    
+                    const data = await response.json();
+                    
+                    if (data.articles && data.articles.length > 0) {
+                        displayNews(data.articles);
+                    } else {
+                        throw new Error('Nenhuma notícia encontrada. Usando dados de exemplo.');
+                    }
+                } catch (error) {
+                    console.error(error);
+                    // Exibir notícias de exemplo em caso de erro
+                    displaySampleNews();
+                }
             }
             
-            navigator.clipboard.writeText(feedUrl)
-                .then(() => {
-                    alert('URL do feed copiada para a área de transferência!');
-                })
-                .catch(err => {
-                    alert('Falha ao copiar a URL: ' + err);
+            // Função para exibir notícias
+            function displayNews(articles) {
+                let newsHTML = '';
+                
+                articles.forEach(article => {
+                    newsHTML += `
+                        <div class="news-card">
+                            <img src="${article.urlToImage || 'https://placehold.co/600x400/0061ff/white?text=Tech+News'}" 
+                                 alt="${article.title}" class="news-image">
+                            <div class="news-content">
+                                <div class="news-source">
+                                    <span class="source-name">${article.source.name || 'Fonte'}</span>
+                                    <span class="news-date">${new Date(article.publishedAt).toLocaleDateString('pt-BR')}</span>
+                                </div>
+                                <h3 class="news-title">${article.title}</h3>
+                                <p class="news-description">${article.description || 'Clique em "Leia mais" para ver a notícia completa.'}</p>
+                                <a href="${article.url}" target="_blank" class="read-more">Leia mais <i class="fas fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+                    `;
                 });
-        }
-        
-        // Testar feed
-        function testFeed() {
-            const feedUrl = document.getElementById('feedUrl').textContent;
-            
-            if (feedUrl.includes('Nenhuma categoria')) {
-                alert('Selecione uma categoria ou palavra-chave primeiro!');
-                return;
+                
+                newsContainer.innerHTML = `<div class="news-grid">${newsHTML}</div>`;
             }
             
-            window.open(feedUrl, '_blank');
-        }
-        
-        // Download do feed
-        function downloadFeed() {
-            if (!currentFeedData) {
-                alert('Selecione uma categoria ou palavra-chave e gere o feed primeiro!');
-                return;
+            // Função para exibir notícias de exemplo (fallback)
+            function displaySampleNews() {
+                const sampleNews = [
+                    {
+                        title: "Inteligência Artificial revoluciona setor de saúde",
+                        description: "Novos algoritmos de IA estão sendo usados para diagnosticar doenças com precisão nunca antes vista.",
+                        url: "#",
+                        urlToImage: "https://placehold.co/600x400/0061ff/white?text=IA+Saúde",
+                        source: { name: "Tech News" },
+                        publishedAt: new Date().toISOString()
+                    },
+                    {
+                        title: "Google anuncia novo smartphone Pixel com recursos inovadores",
+                        description: "O novo dispositivo conta com câmera de última geração e processador desenvolvido pela própria Google.",
+                        url: "#",
+                        urlToImage: "https://placehold.co/600x400/ea4335/white?text=Google+Pixel",
+                        source: { name: "Tech Blog" },
+                        publishedAt: new Date().toISOString()
+                    },
+                    {
+                        title: "Microsoft lança novo Windows com foco em produtividade",
+                        description: "A nova versão do sistema operacional traz ferramentas de produtividade integradas e interface redesenhada.",
+                        url: "#",
+                        urlToImage: "https://placehold.co/600x400/0078d4/white?text=Windows+11",
+                        source: { name: "Tech Daily" },
+                        publishedAt: new Date().toISOString()
+                    },
+                    {
+                        title: "Apple revelar novo iPad Pro com chip M2",
+                        description: "O novo tablet da Apple promete performance comparable a notebooks de alta performance.",
+                        url: "#",
+                        urlToImage: "https://placehold.co/600x400/000000/white?text=iPad+Pro",
+                        source: { name: "Apple News" },
+                        publishedAt: new Date().toISOString()
+                    },
+                    {
+                        title: "5G chega a mais capitais brasileiras",
+                        description: "A tecnologia de quinta geração promete revolucionar a forma como nos conectamos.",
+                        url: "#",
+                        urlToImage: "https://placehold.co/600x400/00c853/white?text=Rede+5G",
+                        source: { name: "Connect Tech" },
+                        publishedAt: new Date().toISOString()
+                    },
+                    {
+                        title: "Realidade Virtual avança com novos headsets",
+                        description: "Novos dispositivos de VR prometem experiências imersivas para games e trabalho.",
+                        url: "#",
+                        urlToImage: "https://placehold.co/600x400/7b1fa2/white?text=Realidade+Virtual",
+                        source: { name: "VR Magazine" },
+                        publishedAt: new Date().toISOString()
+                    }
+                ];
+                
+                displayNews(sampleNews);
+                
+                // Adicionar mensagem informativa
+                newsContainer.innerHTML += `
+                    <div class="error">
+                        <i class="fas fa-info-circle"></i>
+                        <p>Não foi possível carregar notícias em tempo real. Exibindo notícias de exemplo.</p>
+                        <p>Para ver notícias reais, configure uma chave API válida em newsapi.org</p>
+                    </div>
+                `;
             }
             
-            const blob = new Blob([JSON.stringify(currentFeedData, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
+            // Event listeners
+            refreshBtn.addEventListener('click', () => {
+                fetchNews(currentCategory);
+            });
             
-            a.href = url;
-            a.download = `feed-${selectedCategory || selectedKeyword}-${new Date().toISOString().slice(0, 10)}.json`;
-            document.body.appendChild(a);
-            a.click();
+            categoryBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    categoryBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentCategory = btn.dataset.category;
+                    fetchNews(currentCategory);
+                });
+            });
             
-            // Limpar
-            setTimeout(() => {
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-            }, 100);
-        }
-        
-        // Verificar se há parâmetros na URL ao carregar a página
-        document.addEventListener('DOMContentLoaded', function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.has('category')) {
-                const category = urlParams.get('category');
-                selectCategory(category);
-            } else if (urlParams.has('keyword')) {
-                const keyword = urlParams.get('keyword');
-                document.getElementById('keywordInput').value = keyword;
-                searchByKeyword();
-            }
+            // Carregar notícias inicialmente
+            fetchNews();
         });
     </script>
 </body>
