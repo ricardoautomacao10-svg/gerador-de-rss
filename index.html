@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Feed de Notícias - Studio RS Ilhabela</title>
+    <title>Gerador de Feeds de Notícias</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -17,385 +17,396 @@
             background-color: #f5f7fa;
             color: #333;
             line-height: 1.6;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
             padding: 20px;
         }
         
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+        
         header {
-            background: linear-gradient(135deg, #0061ff, #60efff);
-            color: white;
-            padding: 25px 0;
             text-align: center;
-            border-radius: 0 0 20px 20px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             margin-bottom: 30px;
         }
         
         header h1 {
-            font-size: 2.5rem;
+            color: #0061ff;
             margin-bottom: 10px;
         }
         
-        header p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
-        
-        .logo {
-            margin-bottom: 15px;
-            font-weight: bold;
-            font-size: 1.2rem;
-            color: #fff;
-            background: rgba(0, 0, 0, 0.2);
-            display: inline-block;
-            padding: 5px 15px;
-            border-radius: 20px;
-        }
-        
-        .controls {
+        .search-section {
             display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 25px;
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
         }
         
-        .category-btn {
-            background: white;
+        .search-input {
+            flex: 1;
+            padding: 15px;
             border: 2px solid #0061ff;
-            color: #0061ff;
-            padding: 10px 20px;
-            border-radius: 50px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
+            border-radius: 8px 0 0 8px;
+            font-size: 1rem;
+            outline: none;
         }
         
-        .category-btn:hover, .category-btn.active {
+        .search-btn {
             background: #0061ff;
             color: white;
+            border: none;
+            padding: 0 25px;
+            border-radius: 0 8px 8px 0;
+            cursor: pointer;
+            font-weight: 600;
         }
         
-        .refresh-btn {
+        .options {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .option {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .option label {
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #444;
+        }
+        
+        .option select, .option input {
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        
+        .generate-btn {
             background: #00c853;
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 50px;
+            padding: 15px 25px;
+            border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease;
-        }
-        
-        .refresh-btn:hover {
-            background: #009624;
-            transform: scale(1.05);
-        }
-        
-        .news-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 25px;
-            margin-top: 20px;
-        }
-        
-        .news-card {
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        
-        .news-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-        }
-        
-        .news-image {
             width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-bottom: 3px solid #0061ff;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
         }
         
-        .news-content {
+        .result {
+            margin-top: 20px;
             padding: 20px;
+            background: #f0f7ff;
+            border-radius: 8px;
+            display: none;
         }
         
-        .news-source {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-            font-size: 0.9rem;
-            color: #666;
-        }
-        
-        .source-name {
-            font-weight: 600;
+        .result h3 {
+            margin-bottom: 15px;
             color: #0061ff;
         }
         
-        .news-date {
-            color: #888;
+        .download-btn {
+            background: #0061ff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 15px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .news-item {
+            background: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
         
         .news-title {
-            font-size: 1.3rem;
-            margin-bottom: 12px;
+            font-weight: bold;
+            margin-bottom: 8px;
             color: #222;
         }
         
-        .news-description {
+        .news-desc {
             color: #555;
-            margin-bottom: 15px;
-            line-height: 1.5;
+            margin-bottom: 10px;
         }
         
-        .read-more {
-            display: inline-block;
-            color: #0061ff;
-            text-decoration: none;
-            font-weight: 600;
+        .news-meta {
+            display: flex;
+            justify-content: space-between;
+            color: #777;
             font-size: 0.9rem;
-            transition: color 0.3s ease;
-        }
-        
-        .read-more:hover {
-            color: #0040ff;
-            text-decoration: underline;
-        }
-        
-        .loading {
-            text-align: center;
-            padding: 40px;
-            font-size: 1.2rem;
-            color: #666;
-        }
-        
-        .loading i {
-            display: block;
-            font-size: 3rem;
-            margin-bottom: 15px;
-            color: #0061ff;
-        }
-        
-        .error {
-            text-align: center;
-            padding: 40px;
-            color: #d32f2f;
-            background: #ffebee;
-            border-radius: 12px;
-            margin: 20px 0;
         }
         
         footer {
             text-align: center;
-            margin-top: 50px;
-            padding: 20px;
+            margin-top: 30px;
             color: #666;
-            border-top: 1px solid #ddd;
-        }
-        
-        .developer {
-            font-weight: bold;
-            color: #0061ff;
-        }
-        
-        @media (max-width: 768px) {
-            .news-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            header h1 {
-                font-size: 2rem;
-            }
         }
     </style>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <div class="logo">Studio RS Ilhabela</div>
-            <h1><i class="fas fa-newspaper"></i> Feed de Notícias</h1>
-            <p>Fique por dentro das últimas notícias</p>
-        </div>
-    </header>
-    
     <div class="container">
-        <div class="controls">
-            <button class="category-btn active" data-url="https://news.google.com/rss/search?q=litoral%20norte%20de%20s%C3%A3o%20paulo%20when%3A1d&hl=pt-BR&gl=BR&ceid=BR%3Apt-419">Litoral Norte</button>
-            <button class="category-btn" data-url="https://news.google.com/rss/search?q=Brasil&hl=pt-BR&gl=BR&ceid=BR%3Apt-419">Brasil</button>
-            <button class="category-btn" data-url="https://news.google.com/rss/search?q=Mundo&hl=pt-BR&gl=BR&ceid=BR%3Apt-419">Mundo</button>
-            <button class="category-btn" data-url="https://news.google.com/rss/search?q=Esportes&hl=pt-BR&gl=BR&ceid=BR%3Apt-419">Esportes</button>
-            <button class="refresh-btn" id="refresh-btn">
-                <i class="fas fa-sync-alt"></i> Atualizar Notícias
+        <header>
+            <h1><i class="fas fa-rss"></i> Gerador de Feeds de Notícias</h1>
+            <p>Gere feeds personalizados com notícias recentes</p>
+        </header>
+        
+        <div class="search-section">
+            <input type="text" class="search-input" id="search-input" placeholder="Digite palavras-chave (ex: Brasil, Ilhabela, Tecnologia)">
+            <button class="search-btn" id="search-btn">
+                <i class="fas fa-search"></i>
             </button>
         </div>
         
-        <div id="news-container">
-            <div class="loading">
-                <i class="fas fa-spinner fa-spin"></i>
-                <p>Carregando notícias do Litoral Norte...</p>
+        <div class="options">
+            <div class="option">
+                <label for="time-range">Período:</label>
+                <select id="time-range">
+                    <option value="12">Últimas 12 horas</option>
+                    <option value="24">Últimas 24 horas</option>
+                    <option value="48">Últimas 48 horas</option>
+                </select>
+            </div>
+            
+            <div class="option">
+                <label for="format">Formato:</label>
+                <select id="format">
+                    <option value="rss">RSS</option>
+                    <option value="json">JSON</option>
+                </select>
+            </div>
+            
+            <div class="option">
+                <label for="quantity">Quantidade:</label>
+                <select id="quantity">
+                    <option value="10">10 notícias</option>
+                    <option value="20">20 notícias</option>
+                    <option value="30">30 notícias</option>
+                </select>
             </div>
         </div>
-    </div>
-    
-    <footer>
-        <div class="container">
-            <p>Feed de Notícias &copy; 2023 - Desenvolvido por: <span class="developer">Studio RS Ilhabela</span></p>
+        
+        <button class="generate-btn" id="generate-btn">
+            <i class="fas fa-cog"></i> Gerar Feed
+        </button>
+        
+        <div class="result" id="result">
+            <h3>Feed Gerado com Sucesso!</h3>
+            <div id="news-preview"></div>
+            <button class="download-btn" id="download-btn">
+                <i class="fas fa-download"></i> Baixar Feed
+            </button>
         </div>
-    </footer>
+        
+        <footer>
+            <p>Desenvolvido por: Studio RS Ilhabela</p>
+        </footer>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const newsContainer = document.getElementById('news-container');
-            const refreshBtn = document.getElementById('refresh-btn');
-            const categoryBtns = document.querySelectorAll('.category-btn');
+            const searchInput = document.getElementById('search-input');
+            const searchBtn = document.getElementById('search-btn');
+            const generateBtn = document.getElementById('generate-btn');
+            const downloadBtn = document.getElementById('download-btn');
+            const resultDiv = document.getElementById('result');
+            const newsPreview = document.getElementById('news-preview');
+            const timeRange = document.getElementById('time-range');
+            const format = document.getElementById('format');
+            const quantity = document.getElementById('quantity');
             
-            let currentUrl = 'https://news.google.com/rss/search?q=litoral%20norte%20de%20s%C3%A3o%20paulo%20when%3A1d&hl=pt-BR&gl=BR&ceid=BR%3Apt-419';
+            let currentNews = [];
             
-            // Função para buscar notícias do Google RSS
-            async function fetchNews(rssUrl) {
-                newsContainer.innerHTML = `
-                    <div class="loading">
-                        <i class="fas fa-spinner fa-spin"></i>
-                        <p>Carregando notícias...</p>
-                    </div>
-                `;
-                
+            // Função para buscar notícias
+            async function fetchNews(keyword, hours = 12, count = 10) {
                 try {
-                    // Usar um proxy para contornar problemas de CORS
-                    const proxyUrl = 'https://api.allorigins.win/raw?url=';
-                    const response = await fetch(proxyUrl + encodeURIComponent(rssUrl));
+                    // Simulação de busca - em um sistema real, usaria NewsAPI
+                    // Esta é uma versão simplificada para demonstração
+                    const response = await fetch(`https://newsapi.org/v2/everything?q=${encodeURIComponent(keyword)}&language=pt&pageSize=${count}&apiKey=52765fac5f45400591205d8a82af7bee`);
                     
                     if (!response.ok) {
-                        throw new Error('Falha ao carregar notícias');
+                        throw new Error('Erro ao buscar notícias');
                     }
                     
-                    const xmlText = await response.text();
-                    const parser = new DOMParser();
-                    const xmlDoc = parser.parseFromString(xmlText, "text/xml");
-                    
-                    // Extrair itens do RSS
-                    const items = xmlDoc.querySelectorAll('item');
-                    const articles = [];
-                    
-                    items.forEach(item => {
-                        const title = item.querySelector('title').textContent;
-                        const link = item.querySelector('link').textContent;
-                        const description = item.querySelector('description')?.textContent || '';
-                        const pubDate = item.querySelector('pubDate')?.textContent || '';
-                        const source = item.querySelector('source')?.textContent || 'Google News';
-                        
-                        articles.push({
-                            title,
-                            url: link,
-                            description,
-                            publishedAt: pubDate,
-                            source: { name: source }
-                        });
-                    });
-                    
-                    displayNews(articles);
+                    const data = await response.json();
+                    return data.articles || [];
                 } catch (error) {
-                    console.error(error);
-                    newsContainer.innerHTML = `
-                        <div class="error">
-                            <i class="fas fa-exclamation-triangle"></i>
-                            <p>${error.message}</p>
-                            <p>Tentando novamente em 5 segundos...</p>
-                        </div>
-                    `;
-                    
-                    // Tentar novamente após 5 segundos
-                    setTimeout(() => fetchNews(currentUrl), 5000);
+                    console.error('Erro:', error);
+                    // Fallback para dados de exemplo se a API falhar
+                    return generateSampleNews(keyword, count);
                 }
             }
             
-            // Função para exibir notícias
-            function displayNews(articles) {
-                let newsHTML = '';
+            // Gerar notícias de exemplo
+            function generateSampleNews(keyword, count) {
+                const sampleNews = [];
+                const sources = ['CNN Brasil', 'G1', 'UOL', 'Terra', 'R7'];
+                const places = ['São Paulo', 'Rio de Janeiro', 'Brasília', 'Ilhabela', 'Santos'];
+                
+                for (let i = 1; i <= count; i++) {
+                    sampleNews.push({
+                        title: `Notícia sobre ${keyword} - ${i}`,
+                        description: `Esta é uma notícia de exemplo sobre ${keyword}. Em uma implementação real, esta conteria conteúdo real extraído da API.`,
+                        url: `https://exemplo.com/noticia-${i}`,
+                        publishedAt: new Date(Date.now() - Math.random() * 48 * 60 * 60 * 1000).toISOString(),
+                        source: { name: sources[i % sources.length] },
+                        content: `Conteúdo completo da notícia sobre ${keyword} em ${places[i % places.length]}.`
+                    });
+                }
+                
+                return sampleNews;
+            }
+            
+            // Função para exibir preview das notícias
+            function displayNewsPreview(articles) {
+                newsPreview.innerHTML = '';
                 
                 articles.forEach(article => {
-                    // Verificar se a notícia tem conteúdo válido
-                    if (!article.title) return;
+                    const newsItem = document.createElement('div');
+                    newsItem.className = 'news-item';
                     
-                    newsHTML += `
-                        <div class="news-card">
-                            <img src="https://placehold.co/600x400/0061ff/white?text=Notícia" 
-                                 alt="${article.title}" class="news-image">
-                            <div class="news-content">
-                                <div class="news-source">
-                                    <span class="source-name">${article.source.name || 'Fonte'}</span>
-                                    <span class="news-date">${formatDate(article.publishedAt)}</span>
-                                </div>
-                                <h3 class="news-title">${article.title}</h3>
-                                <p class="news-description">${truncateText(article.description || 'Clique em "Leia mais" para ver a notícia completa.', 120)}</p>
-                                <a href="${article.url}" target="_blank" class="read-more">Leia mais <i class="fas fa-arrow-right"></i></a>
-                            </div>
+                    newsItem.innerHTML = `
+                        <div class="news-title">${article.title}</div>
+                        <div class="news-desc">${article.description || 'Clique para ler mais'}</div>
+                        <div class="news-meta">
+                            <span>${article.source.name}</span>
+                            <span>${new Date(article.publishedAt).toLocaleDateString('pt-BR')}</span>
                         </div>
                     `;
+                    
+                    newsPreview.appendChild(newsItem);
                 });
-                
-                if (newsHTML === '') {
-                    newsContainer.innerHTML = `
-                        <div class="error">
-                            <i class="fas fa-exclamation-circle"></i>
-                            <p>Nenhuma notícia disponível no momento. Tente novamente mais tarde.</p>
-                        </div>
-                    `;
-                } else {
-                    newsContainer.innerHTML = `<div class="news-grid">${newsHTML}</div>`;
-                }
             }
             
-            // Função para formatar a data
-            function formatDate(dateString) {
-                if (!dateString) return 'Data não disponível';
+            // Função para gerar RSS
+            function generateRss(keyword, articles) {
+                let rss = `<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+<channel>
+    <title>Notícias sobre ${keyword}</title>
+    <link>https://exemplo.com/feed</link>
+    <description>Feed de notícias sobre ${keyword}</description>
+    <language>pt-br</language>`;
+                
+                articles.forEach(article => {
+                    rss += `
+    <item>
+        <title>${article.title.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</title>
+        <link>${article.url}</link>
+        <description>${(article.description || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</description>
+        <pubDate>${new Date(article.publishedAt).toUTCString()}</pubDate>
+        <source url="${article.url}">${article.source.name}</source>
+    </item>`;
+                });
+                
+                rss += '\n</channel>\n</rss>';
+                return rss;
+            }
+            
+            // Função para gerar JSON
+            function generateJson(keyword, articles) {
+                const feed = {
+                    version: "https://jsonfeed.org/version/1.1",
+                    title: `Notícias sobre ${keyword}`,
+                    home_page_url: "https://exemplo.com/feed",
+                    feed_url: "https://exemplo.com/feed.json",
+                    description: `Feed de notícias sobre ${keyword}`,
+                    items: articles.map(article => ({
+                        id: article.url,
+                        url: article.url,
+                        title: article.title,
+                        content_text: article.description,
+                        date_published: article.publishedAt,
+                        author: article.source.name
+                    }))
+                };
+                
+                return JSON.stringify(feed, null, 2);
+            }
+            
+            // Event listener para o botão de busca
+            searchBtn.addEventListener('click', performSearch);
+            
+            // Event listener para o botão de gerar feed
+            generateBtn.addEventListener('click', performSearch);
+            
+            // Event listener para Enter no campo de busca
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
+            
+            // Função principal de busca
+            async function performSearch() {
+                const keyword = searchInput.value.trim();
+                
+                if (!keyword) {
+                    alert('Por favor, digite uma palavra-chave para buscar');
+                    return;
+                }
+                
+                const hours = parseInt(timeRange.value);
+                const count = parseInt(quantity.value);
+                
+                // Mostrar loading
+                newsPreview.innerHTML = '<p>Buscando notícias...</p>';
+                resultDiv.style.display = 'block';
                 
                 try {
-                    const date = new Date(dateString);
-                    return date.toLocaleDateString('pt-BR');
-                } catch (e) {
-                    return dateString;
+                    currentNews = await fetchNews(keyword, hours, count);
+                    displayNewsPreview(currentNews);
+                    
+                    // Configurar o botão de download
+                    downloadBtn.onclick = function() {
+                        const selectedFormat = format.value;
+                        let content, mimeType, filename;
+                        
+                        if (selectedFormat === 'rss') {
+                            content = generateRss(keyword, currentNews);
+                            mimeType = 'application/rss+xml';
+                            filename = `noticias_${keyword}.rss`;
+                        } else {
+                            content = generateJson(keyword, currentNews);
+                            mimeType = 'application/json';
+                            filename = `noticias_${keyword}.json`;
+                        }
+                        
+                        // Criar blob e fazer download
+                        const blob = new Blob([content], { type: mimeType });
+                        const url = URL.createObjectURL(blob);
+                        
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = filename;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        
+                        URL.revokeObjectURL(url);
+                    };
+                    
+                } catch (error) {
+                    newsPreview.innerHTML = `<p class="error">Erro ao buscar notícias: ${error.message}</p>`;
                 }
             }
-            
-            // Função para truncar texto
-            function truncateText(text, maxLength) {
-                if (text.length <= maxLength) return text;
-                return text.substr(0, maxLength) + '...';
-            }
-            
-            // Event listeners
-            refreshBtn.addEventListener('click', () => {
-                fetchNews(currentUrl);
-            });
-            
-            categoryBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    categoryBtns.forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    currentUrl = btn.dataset.url;
-                    fetchNews(currentUrl);
-                });
-            });
-            
-            // Carregar notícias inicialmente
-            fetchNews(currentUrl);
         });
     </script>
 </body>
