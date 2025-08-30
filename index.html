@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Feed de Notícias Real - MultiCategorias</title>
+    <title>Feed de Notícias com Palavras-Chave</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -374,6 +374,23 @@
             font-weight: bold;
         }
         
+        .keyword-search {
+            background-color: #f0f9ff;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 20px 0;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .keyword-input {
+            width: 100%;
+            padding: 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin: 12px 0;
+            font-size: 16px;
+        }
+        
         .loading {
             display: inline-block;
             width: 20px;
@@ -419,8 +436,8 @@
 <body>
     <div class="container">
         <header>
-            <h1>Feed de Notícias Real <span class="badge">API Integrada</span></h1>
-            <p class="tagline">Gere feeds automatizados com notícias reais em tempo real</p>
+            <h1>Feed de Notícias com Palavras-Chave <span class="badge">API Integrada</span></h1>
+            <p class="tagline">Gere feeds personalizados com base em categorias ou palavras-chave</p>
         </header>
         
         <div class="main-content">
@@ -462,6 +479,15 @@
                 
                 <button onclick="saveApiKey()" id="saveBtn"><i class="fas fa-save"></i> Salvar Chave</button>
                 <button onclick="clearApiKey()" class="btn-danger"><i class="fas fa-trash"></i> Limpar Chave</button>
+            </div>
+            
+            <div class="keyword-search">
+                <h2 class="card-title"><i class="fas fa-search"></i> Buscar por Palavra-Chave</h2>
+                <p>Digite uma palavra-chave para buscar notícias específicas:</p>
+                
+                <input type="text" id="keywordInput" class="keyword-input" placeholder="Ex: inteligência artificial, futebol, política">
+                
+                <button onclick="searchByKeyword()" id="searchBtn"><i class="fas fa-search"></i> Buscar Notícias</button>
             </div>
             
             <div class="card">
@@ -515,7 +541,7 @@
                 <div class="result-container">
                     <h3><i class="fas fa-rss"></i> Feed Gerado:</h3>
                     <div class="feed-url" id="feedUrl">
-                        Nenhuma categoria selecionada. Clique em uma categoria acima para gerar o feed.
+                        Nenhuma categoria ou palavra-chave selecionada. Clique em uma categoria ou busque por palavra-chave para gerar o feed.
                     </div>
                     <button onclick="copyFeedUrl()"><i class="fas fa-copy"></i> Copiar URL do Feed</button>
                     <button onclick="testFeed()" class="btn-success"><i class="fas fa-play"></i> Testar Feed</button>
@@ -528,7 +554,7 @@
                 <h2 class="card-title"><i class="fas fa-eye"></i> Visualização do Feed</h2>
                 
                 <div class="feed-preview" id="feedPreview">
-                    <p>O conteúdo do feed aparecerá aqui após selecionar uma categoria.</p>
+                    <p>O conteúdo do feed aparecerá aqui após selecionar uma categoria ou buscar por palavra-chave.</p>
                 </div>
             </div>
             
@@ -536,7 +562,7 @@
                 <h3><i class="fas fa-question-circle"></i> Como usar esta ferramenta:</h3>
                 <p>1. Obtenha uma chave API gratuita em <a href="https://newsapi.org/register" target="_blank">NewsAPI.org</a></p>
                 <p>2. Cole a chave no campo de configuração e salve</p>
-                <p>3. Selecione uma categoria de notícias</p>
+                <p>3. Selecione uma categoria de notícias OU digite uma palavra-chade</p>
                 <p>4. Copie a URL do feed gerado</p>
                 <p>5. Use esta URL em suas automações ou aplicativos</p>
                 <p>6. O feed será atualizado automaticamente com as últimas notícias</p>
@@ -553,6 +579,7 @@
                 </ol>
                 
                 <p><strong>Exemplo de URL para automação:</strong> https://seuusuario.github.io/nomedorepositorio/?category=technology&format=json</p>
+                <p><strong>Exemplo de URL com palavra-chave:</strong> https://seuusuario.github.io/nomedorepositorio/?keyword=inteligência+artificial&format=json</p>
             </div>
         </div>
         
@@ -565,7 +592,9 @@
     <script>
         // Variáveis globais
         let selectedCategory = null;
+        let selectedKeyword = null;
         let currentFeedData = null;
+        let currentSearchType = null; // 'category' or 'keyword'
         
         // Inicializar
         document.addEventListener('DOMContentLoaded', function() {
@@ -574,6 +603,17 @@
             if (savedApiKey) {
                 document.getElementById('apiKey').value = savedApiKey;
                 showApiStatus('Chave API carregada com sucesso!', 'success');
+            }
+            
+            // Verificar se há parâmetros na URL
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('category')) {
+                const category = urlParams.get('category');
+                selectCategory(category);
+            } else if (urlParams.has('keyword')) {
+                const keyword = urlParams.get('keyword');
+                document.getElementById('keywordInput').value = keyword;
+                searchByKeyword(keyword);
             }
         });
         
@@ -608,8 +648,8 @@
             localStorage.setItem('newsApiKey', apiKey);
             showApiStatus('Chave API salva com sucesso!', 'success');
             
-            // Se já houver uma categoria selecionada, atualizar o feed
-            if (selectedCategory) {
+            // Se já houver uma busca selecionada, atualizar o feed
+            if (selectedCategory || selectedKeyword) {
                 refreshFeed();
             }
         }
@@ -624,13 +664,17 @@
         // Selecionar uma categoria
         function selectCategory(category) {
             selectedCategory = category;
+            selectedKeyword = null;
+            currentSearchType = 'category';
             
             // Destacar visualmente a categoria selecionada
             document.querySelectorAll('.category-card').forEach(card => {
                 card.style.border = '1px solid var(--border-color)';
             });
             
-            event.currentTarget.style.border = '2px solid var(--primary-color)';
+            if (event) {
+                event.currentTarget.style.border = '2px solid var(--primary-color)';
+            }
             
             // Gerar a URL do feed
             const feedUrl = `${window.location.origin}${window.location.pathname}?category=${category}&format=json`;
@@ -646,8 +690,40 @@
             refreshFeed();
         }
         
+        // Buscar por palavra-chave
+        function searchByKeyword() {
+            const keyword = document.getElementById('keywordInput').value.trim();
+            
+            if (!keyword) {
+                showApiStatus('Por favor, digite uma palavra-chave para buscar', 'error');
+                return;
+            }
+            
+            selectedKeyword = keyword;
+            selectedCategory = null;
+            currentSearchType = 'keyword';
+            
+            // Remover destaque das categorias
+            document.querySelectorAll('.category-card').forEach(card => {
+                card.style.border = '1px solid var(--border-color)';
+            });
+            
+            // Gerar a URL do feed
+            const feedUrl = `${window.location.origin}${window.location.pathname}?keyword=${encodeURIComponent(keyword)}&format=json`;
+            
+            // Atualizar a interface
+            document.getElementById('feedUrl').textContent = feedUrl;
+            document.getElementById('feedUrl').style.fontWeight = 'bold';
+            
+            // Mostrar loading
+            document.getElementById('feedPreview').innerHTML = '<p><i class="fas fa-spinner fa-spin"></i> Buscando notícias...</p>';
+            
+            // Buscar e exibir conteúdo do feed
+            refreshFeed();
+        }
+        
         // Buscar notícias reais da API
-        async function fetchRealNews(category) {
+        async function fetchRealNews() {
             const apiKey = localStorage.getItem('newsApiKey');
             
             // Se não houver chave API, usar dados de exemplo
@@ -655,8 +731,16 @@
                 throw new Error('Chave API não configurada');
             }
             
+            let apiUrl = '';
+            
+            if (currentSearchType === 'category') {
+                apiUrl = `https://newsapi.org/v2/top-headlines?category=${selectedCategory}&language=pt&apiKey=${apiKey}`;
+            } else if (currentSearchType === 'keyword') {
+                apiUrl = `https://newsapi.org/v2/everything?q=${encodeURIComponent(selectedKeyword)}&language=pt&sortBy=publishedAt&apiKey=${apiKey}`;
+            }
+            
             // Fazer requisição para a NewsAPI
-            const response = await fetch(`https://newsapi.org/v2/top-headlines?category=${category}&language=pt&apiKey=${apiKey}`);
+            const response = await fetch(apiUrl);
             
             if (!response.ok) {
                 throw new Error(`Erro na API: ${response.status}`);
@@ -666,11 +750,15 @@
             
             // Formatar os dados para nosso feed
             return {
-                title: `Feed de Notícias - ${getCategoryName(category)}`,
-                description: `Feed automático com as últimas notícias sobre ${getCategoryName(category)}`,
+                title: currentSearchType === 'category' 
+                    ? `Feed de Notícias - ${getCategoryName(selectedCategory)}`
+                    : `Feed de Notícias - ${selectedKeyword}`,
+                description: currentSearchType === 'category'
+                    ? `Feed automático com as últimas notícias sobre ${getCategoryName(selectedCategory)}`
+                    : `Feed automático com notícias sobre ${selectedKeyword}`,
                 link: window.location.href,
                 lastBuildDate: new Date().toISOString(),
-                items: data.articles.slice(0, 10).map(article => ({
+                items: data.articles.slice(0, 15).map(article => ({
                     title: article.title,
                     description: article.description,
                     link: article.url,
@@ -682,19 +770,27 @@
         }
         
         // Gerar dados de exemplo (fallback)
-        function generateMockData(category) {
+        function generateMockData() {
+            const title = currentSearchType === 'category' 
+                ? `Feed de Notícias - ${getCategoryName(selectedCategory)}`
+                : `Feed de Notícias - ${selectedKeyword}`;
+                
+            const description = currentSearchType === 'category'
+                ? `Feed automático com as últimas notícias sobre ${getCategoryName(selectedCategory)}`
+                : `Feed automático com notícias sobre ${selectedKeyword}`;
+            
             return {
-                title: `Feed de Notícias - ${getCategoryName(category)}`,
-                description: `Feed automático com as últimas notícias sobre ${getCategoryName(category)}`,
+                title: title,
+                description: description,
                 link: window.location.href,
                 lastBuildDate: new Date().toISOString(),
                 items: Array.from({ length: 5 }, (_, i) => ({
-                    title: `${getCategoryName(category)} - Notícia #${i + 1}`,
-                    description: `Esta é uma notícia exemplo sobre ${getCategoryName(category)}. Para conteúdo real, configure uma chave API.`,
-                    link: `https://exemplo.com/noticia-${category}-${i + 1}`,
-                    image: `https://picsum.photos/600/400?random=${i}${category}`,
+                    title: `${title} - Notícia #${i + 1}`,
+                    description: `Esta é uma notícia exemplo. Para conteúdo real, configure uma chave API.`,
+                    link: `https://exemplo.com/noticia-${i + 1}`,
+                    image: `https://picsum.photos/600/400?random=${i}`,
                     pubDate: new Date(Date.now() - Math.floor(Math.random() * 12 * 60 * 60 * 1000)).toISOString(),
-                    content: `<p>Esta é uma notícia completa sobre ${getCategoryName(category)}. Para conteúdo real, configure uma chave API.</p>`
+                    content: `<p>Esta é uma notícia completa. Para conteúdo real, configure uma chave API.</p>`
                 }))
             };
         }
@@ -720,7 +816,7 @@
             feedPreview.innerHTML = '';
             
             if (feedData.items.length === 0) {
-                feedPreview.innerHTML = '<p>Nenhuma notícia encontrada para esta categoria.</p>';
+                feedPreview.innerHTML = '<p>Nenhuma notícia encontrada.</p>';
                 return;
             }
             
@@ -750,8 +846,8 @@
         function copyFeedUrl() {
             const feedUrl = document.getElementById('feedUrl').textContent;
             
-            if (feedUrl === 'Nenhuma categoria selecionada. Clique em uma categoria acima para gerar o feed.') {
-                alert('Selecione uma categoria primeiro!');
+            if (feedUrl.includes('Nenhuma categoria')) {
+                alert('Selecione uma categoria ou palavra-chave primeiro!');
                 return;
             }
             
@@ -768,8 +864,8 @@
         function testFeed() {
             const feedUrl = document.getElementById('feedUrl').textContent;
             
-            if (feedUrl === 'Nenhuma categoria selecionada. Clique em uma categoria acima para gerar o feed.') {
-                alert('Selecione uma categoria primeiro!');
+            if (feedUrl.includes('Nenhuma categoria')) {
+                alert('Selecione uma categoria ou palavra-chave primeiro!');
                 return;
             }
             
@@ -778,8 +874,8 @@
         
         // Atualizar feed
         async function refreshFeed() {
-            if (!selectedCategory) {
-                alert('Selecione uma categoria primeiro!');
+            if (!selectedCategory && !selectedKeyword) {
+                alert('Selecione uma categoria ou palavra-chave primeiro!');
                 return;
             }
             
@@ -793,10 +889,10 @@
                 
                 if (apiKey) {
                     // Buscar dados reais da API
-                    feedData = await fetchRealNews(selectedCategory);
+                    feedData = await fetchRealNews();
                 } else {
                     // Usar dados de exemplo
-                    feedData = generateMockData(selectedCategory);
+                    feedData = generateMockData();
                 }
                 
                 currentFeedData = feedData;
@@ -805,7 +901,7 @@
             } catch (error) {
                 console.error('Erro ao buscar notícias:', error);
                 // Usar dados de exemplo em caso de erro
-                const mockData = generateMockData(selectedCategory);
+                const mockData = generateMockData();
                 currentFeedData = mockData;
                 displayFeedPreview(mockData);
                 alert('Usando dados de exemplo. Configure uma chave API para conteúdo real.');
@@ -818,7 +914,7 @@
         // Download do feed
         function downloadFeed() {
             if (!currentFeedData) {
-                alert('Selecione uma categoria e gere o feed primeiro!');
+                alert('Selecione uma categoria ou palavra-chave e gere o feed primeiro!');
                 return;
             }
             
@@ -827,7 +923,7 @@
             const a = document.createElement('a');
             
             a.href = url;
-            a.download = `feed-${selectedCategory}-${new Date().toISOString().slice(0, 10)}.json`;
+            a.download = `feed-${selectedCategory || selectedKeyword}-${new Date().toISOString().slice(0, 10)}.json`;
             document.body.appendChild(a);
             a.click();
             
