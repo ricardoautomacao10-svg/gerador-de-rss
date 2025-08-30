@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Feed de Notícias com Palavras-Chave</title>
+    <title>Feed de Notícias com Palavras-Chave - Corrigido</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -436,8 +436,8 @@
 <body>
     <div class="container">
         <header>
-            <h1>Feed de Notícias com Palavras-Chave <span class="badge">API Integrada</span></h1>
-            <p class="tagline">Gere feeds personalizados com base em categorias ou palavras-chave</p>
+            <h1>Feed de Notícias Corrigido <span class="badge">API Funcional</span></h1>
+            <p class="tagline">Agora com suporte completo para palavras-chave e categorias</p>
         </header>
         
         <div class="main-content">
@@ -479,6 +479,7 @@
                 
                 <button onclick="saveApiKey()" id="saveBtn"><i class="fas fa-save"></i> Salvar Chave</button>
                 <button onclick="clearApiKey()" class="btn-danger"><i class="fas fa-trash"></i> Limpar Chave</button>
+                <button onclick="testApiKey()" class="btn-success"><i class="fas fa-check"></i> Testar Chave</button>
             </div>
             
             <div class="keyword-search">
@@ -562,7 +563,7 @@
                 <h3><i class="fas fa-question-circle"></i> Como usar esta ferramenta:</h3>
                 <p>1. Obtenha uma chave API gratuita em <a href="https://newsapi.org/register" target="_blank">NewsAPI.org</a></p>
                 <p>2. Cole a chave no campo de configuração e salve</p>
-                <p>3. Selecione uma categoria de notícias OU digite uma palavra-chade</p>
+                <p>3. Selecione uma categoria de notícias OU digite uma palavra-chave</p>
                 <p>4. Copie a URL do feed gerado</p>
                 <p>5. Use esta URL em suas automações ou aplicativos</p>
                 <p>6. O feed será atualizado automaticamente com as últimas notícias</p>
@@ -634,6 +635,44 @@
             setTimeout(() => {
                 statusElement.style.display = 'none';
             }, 5000);
+        }
+        
+        // Testar chave API
+        async function testApiKey() {
+            const apiKey = document.getElementById('apiKey').value.trim();
+            
+            if (!apiKey) {
+                showApiStatus('Por favor, insira uma chave API válida', 'error');
+                return;
+            }
+            
+            const testBtn = document.getElementById('saveBtn');
+            testBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Testando...';
+            testBtn.disabled = true;
+            
+            try {
+                // Fazer uma requisição de teste para a NewsAPI
+                const response = await fetch(`https://newsapi.org/v2/top-headlines?country=us&pageSize=1&apiKey=${apiKey}`);
+                
+                if (!response.ok) {
+                    throw new Error(`Erro na API: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.status === 'ok') {
+                    showApiStatus('Chave API válida! Conexão bem-sucedida.', 'success');
+                    localStorage.setItem('newsApiKey', apiKey);
+                } else {
+                    throw new Error('Resposta inválida da API');
+                }
+            } catch (error) {
+                console.error('Erro ao testar a chave API:', error);
+                showApiStatus('Erro ao testar a chave API. Verifique se a chave está correta.', 'error');
+            } finally {
+                testBtn.innerHTML = '<i class="fas fa-save"></i> Salvar Chave';
+                testBtn.disabled = false;
+            }
         }
         
         // Salvar chave API
@@ -888,7 +927,7 @@
                 const apiKey = localStorage.getItem('newsApiKey');
                 
                 if (apiKey) {
-                    // Buscar dados reais da API
+                    // Buscar dados real da API
                     feedData = await fetchRealNews();
                 } else {
                     // Usar dados de exemplo
@@ -904,7 +943,7 @@
                 const mockData = generateMockData();
                 currentFeedData = mockData;
                 displayFeedPreview(mockData);
-                alert('Usando dados de exemplo. Configure uma chave API para conteúdo real.');
+                alert('Usando dados de exemplo. Verifique sua chave API e conexão.');
             } finally {
                 refreshBtn.disabled = false;
                 refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Atualizar Feed';
