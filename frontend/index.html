@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Feeds de Notícias</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1><i class="fas fa-rss"></i> Gerador de Feeds de Notícias</h1>
+            <p>Crie feeds RSS/JSON personalizados por palavra-chave</p>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="controls">
+            <div class="search-section">
+                <input type="text" class="search-input" id="search-input" placeholder="Digite palavras-chave...">
+                <button class="search-btn" id="search-btn">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+            
+            <div class="feed-config">
+                <div class="feed-type">
+                    <input type="radio" id="rss-format" name="feed-format" value="rss" checked>
+                    <label for="rss-format">RSS</label>
+                    <input type="radio" id="json-format" name="feed-format" value="json">
+                    <label for="json-format">JSON</label>
+                </div>
+                
+                <button class="generate-btn" id="generate-btn">
+                    <i class="fas fa-cog"></i> Gerar Feed
+                </button>
+            </div>
+        </div>
+        
+        <div class="feed-url-section" id="feed-url-section">
+            <h3>Seu Feed Personalizado</h3>
+            <div class="url-container">
+                <input type="text" class="url-input" id="feed-url" readonly>
+                <button class="copy-btn" id="copy-btn">
+                    <i class="fas fa-copy"></i> Copiar
+                </button>
+            </div>
+            <div class="auto-update">
+                <i class="fas fa-sync-alt"></i>
+                <span>Este feed é atualizado automaticamente a cada hora</span>
+            </div>
+        </div>
+        
+        <div id="news-container">
+            <div class="loading">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Digite uma palavra-chave e clique em "Gerar Feed" para começar</p>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <div class="container">
+            <p>Gerador de Feeds de Notícias &copy; 2023 - Desenvolvido com <i class="fas fa-heart" style="color: #d32f2f;"></i></p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
