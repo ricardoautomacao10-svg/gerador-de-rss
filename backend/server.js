@@ -1,29 +1,27 @@
+// server.js (Versão Corrigida)
+
 const express = require('express');
 const axios = require('axios');
-const cors = require('cors');
-const fs = require('fs');
-const path = require('path');
-const cron = require('node-cron');
+const cors =require('cors');
+require('dotenv').config(); // Adicione esta linha no topo para carregar variáveis de ambiente
 
 const app = express();
-const port = 3000;
+// Use a porta do ambiente de produção ou 3000 para desenvolvimento
+const port = process.env.PORT || 3000; 
 
-// Sua chave da API NewsAPI
-const API_KEY = '52765fac5f45400591205d8a82af7bee';
+// Sua chave da API NewsAPI (agora vinda de um arquivo .env)
+const API_KEY = process.env.NEWS_API_KEY;
 
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use(express.static('../frontend'));
 
-// Pasta para armazenar os feeds
-const feedsDir = path.join(__dirname, 'feeds');
-if (!fs.existsSync(feedsDir)) {
-    fs.mkdirSync(feedsDir);
-}
-
-// Função para buscar notícias
+// Função para buscar notícias (sem alterações)
 async function fetchNews(keyword) {
+    if (!API_KEY) {
+        console.error('Chave da API não encontrada. Crie um arquivo .env com NEWS_API_KEY.');
+        return [];
+    }
     try {
         const apiUrl = `https://newsapi.org/v2/everything?q=${encodeURIComponent(keyword)}&language=pt&sortBy=publishedAt&pageSize=20&apiKey=${API_KEY}`;
         const response = await axios.get(apiUrl);
@@ -34,13 +32,15 @@ async function fetchNews(keyword) {
     }
 }
 
-// Função para gerar RSS
+// Funções para gerar RSS e JSON (sem alterações)
 function generateRss(keyword, articles) {
+    // ... seu código original aqui ...
+    // Apenas mude o <link> para o URL público do seu app quando for hospedar
     let rss = `<?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0">
 <channel>
     <title>Notícias sobre ${keyword}</title>
-    <link>http://localhost:${port}</link>
+    <link>URL_DO_SEU_SITE_AQUI</link>
     <description>Feed de notícias sobre ${keyword}</description>
     <language>pt-br</language>`;
 
@@ -64,13 +64,13 @@ function generateRss(keyword, articles) {
     return rss;
 }
 
-// Função para gerar JSON
 function generateJson(keyword, articles) {
-    const feed = {
+    // ... seu código original aqui ...
+     const feed = {
         version: "https://jsonfeed.org/version/1.1",
         title: `Notícias sobre ${keyword}`,
-        home_page_url: `http://localhost:${port}`,
-        feed_url: `http://localhost:${port}/feed/json/${encodeURIComponent(keyword)}`,
+        home_page_url: `URL_DO_SEU_SITE_AQUI`,
+        feed_url: `URL_DO_SEU_SITE_AQUI/feed/json/${encodeURIComponent(keyword)}`,
         description: `Feed de notícias sobre ${keyword}`,
         items: articles.map(article => {
             if (!article.title || article.title === '[Removed]') return null;
@@ -86,12 +86,11 @@ function generateJson(keyword, articles) {
             };
         }).filter(item => item !== null)
     };
-
     return feed;
 }
 
-// Função auxiliar para escape de XML
 function escapeXml(unsafe) {
+    // ... seu código original aqui ...
     return unsafe.replace(/[<>&'"]/g, function (c) {
         switch (c) {
             case '<': return '&lt;';
@@ -103,94 +102,35 @@ function escapeXml(unsafe) {
     });
 }
 
-// Rota para gerar feed
-app.get('/generate-feed', async (req, res) => {
-    const { keyword, format } = req.query;
-    
+// ===== NOVA ROTA DINÂMICA =====
+app.get('/feed/:format/:keyword', async (req, res) => {
+    const { format, keyword } = req.params;
+    const { limit } = req.query; // Pega o limite da query string
+
     if (!keyword) {
-        return res.status(400).json({ error: 'Parâmetro "keyword" é obrigatório' });
+        return res.status(400).send('Parâmetro "keyword" é obrigatório');
     }
 
     try {
         const articles = await fetchNews(keyword);
-        
+        const limitedArticles = limit ? articles.slice(0, parseInt(limit, 10)) : articles;
+
         if (format === 'rss') {
-            const rss = generateRss(keyword, articles);
-            // Salvar RSS em arquivo
-            const filename = `feed_${encodeURIComponent(keyword)}.rss`;
-            fs.writeFileSync(path.join(feedsDir, filename), rss);
-            
-            res.json({
-                message: 'Feed RSS gerado com sucesso',
-                url: `http://localhost:${port}/feeds/${filename}`
-            });
+            const rssContent = generateRss(keyword, limitedArticles);
+            res.header('Content-Type', 'application/rss+xml');
+            res.send(rssContent);
         } else if (format === 'json') {
-            const jsonFeed = generateJson(keyword, articles);
-            // Salvar JSON em arquivo
-            const filename = `feed_${encodeURIComponent(keyword)}.json`;
-            fs.writeFileSync(path.join(feedsDir, filename), JSON.stringify(jsonFeed, null, 2));
-            
-            res.json({
-                message: 'Feed JSON gerado com sucesso',
-                url: `http://localhost:${port}/feeds/${filename}`
-            });
+            const jsonContent = generateJson(keyword, limitedArticles);
+            res.header('Content-Type', 'application/json');
+            res.json(jsonContent);
         } else {
-            res.status(400).json({ error: 'Formato inválido. Use "rss" ou "json"' });
+            res.status(400).send('Formato inválido. Use "rss" ou "json".');
         }
     } catch (error) {
-        res.status(500).json({ error: 'Erro ao gerar feed' });
+        res.status(500).send('Erro ao gerar o feed.');
     }
 });
 
-// Rota para servir arquivos de feed
-app.use('/feeds', express.static(feedsDir));
-
-// Rota para buscar notícias (para o frontend)
-app.get('/news', async (req, res) => {
-    const { keyword } = req.query;
-    
-    if (!keyword) {
-        return res.status(400).json({ error: 'Parâmetro "keyword" é obrigatório' });
-    }
-
-    try {
-        const articles = await fetchNews(keyword);
-        res.json(articles);
-    } catch (error) {
-        res.status(500).json({ error: 'Erro ao buscar notícias' });
-    }
-});
-
-// Agendador para atualizar feeds a cada hora
-cron.schedule('0 * * * *', async () => {
-    console.log('Atualizando feeds...');
-    
-    try {
-        const files = fs.readdirSync(feedsDir);
-        
-        for (const file of files) {
-            if (file.endsWith('.rss') || file.endsWith('.json')) {
-                // Extrair keyword do nome do arquivo
-                const keyword = decodeURIComponent(file.replace(/^(feed_|\.(rss|json)$)/g, ''));
-                
-                // Buscar notícias atualizadas
-                const articles = await fetchNews(keyword);
-                
-                if (file.endsWith('.rss')) {
-                    const rss = generateRss(keyword, articles);
-                    fs.writeFileSync(path.join(feedsDir, file), rss);
-                } else {
-                    const jsonFeed = generateJson(keyword, articles);
-                    fs.writeFileSync(path.join(feedsDir, file), JSON.stringify(jsonFeed, null, 2));
-                }
-                
-                console.log(`Feed atualizado: ${keyword}`);
-            }
-        }
-    } catch (error) {
-        console.error('Erro ao atualizar feeds:', error);
-    }
-});
 
 app.listen(port, () => {
     console.log(`Servidor rodando em http://localhost:${port}`);
