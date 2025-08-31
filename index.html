@@ -1,593 +1,598 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RS AutoFeed Generator - Studio RS</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --primary: #2563eb;
-            --secondary: #10b981;
-            --dark: #1f2937;
-            --light: #f9fafb;
-            --gray: #6b7280;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background-color: #f5f8ff;
-            color: #333;
-            line-height: 1.6;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        header {
-            background: linear-gradient(135deg, var(--primary), #1d4ed8);
-            color: white;
-            padding: 25px 0;
-            text-align: center;
-            border-radius: 0 0 20px 20px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
-        }
-        
-        header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
-        
-        header p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
-        
-        .logo {
-            margin-top: 15px;
-            font-weight: bold;
-            font-size: 1.2rem;
-            color: #fff;
-            background: rgba(0, 0, 0, 0.2);
-            display: inline-block;
-            padding: 8px 20px;
-            border-radius: 20px;
-        }
-        
-        .main-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-        
-        @media (max-width: 900px) {
-            .main-content {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        .setup-panel, .feeds-panel {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-        }
-        
-        .panel-title {
-            color: var(--primary);
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #f0f4ff;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .input-group {
-            margin-bottom: 20px;
-        }
-        
-        .input-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: var(--dark);
-        }
-        
-        .input-group input, .input-group select {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e5e7eb;
-            border-radius: 10px;
-            font-size: 1rem;
-            transition: all 0.3s;
-        }
-        
-        .input-group input:focus, .input-group select:focus {
-            border-color: var(--primary);
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
-        
-        .keyword-input {
-            display: flex;
-            gap: 10px;
-        }
-        
-        .keyword-input input {
-            flex: 1;
-        }
-        
-        .add-btn {
-            background: var(--secondary);
-            color: white;
-            border: none;
-            padding: 0 20px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-        
-        .add-btn:hover {
-            background: #059669;
-        }
-        
-        .keywords-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 20px;
-            min-height: 50px;
-            padding: 10px;
-            border: 2px dashed #e5e7eb;
-            border-radius: 10px;
-        }
-        
-        .keyword-item {
-            background: var(--primary);
-            color: white;
-            padding: 8px 15px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .keyword-item button {
-            background: none;
-            border: none;
-            color: white;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-        
-        .generate-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 15px 25px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 1.1rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            width: 100%;
-            justify-content: center;
-            transition: all 0.3s;
-        }
-        
-        .generate-btn:hover {
-            background: #1d4ed8;
-            transform: translateY(-2px);
-        }
-        
-        .feed-item {
-            background: #f8faff;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            border-left: 4px solid var(--primary);
-        }
-        
-        .feed-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        
-        .feed-title {
-            font-weight: bold;
-            color: var(--primary);
-            font-size: 1.2rem;
-        }
-        
-        .feed-url {
-            background: white;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            font-family: monospace;
-            overflow-x: auto;
-            border: 1px solid #e5e7eb;
-        }
-        
-        .copy-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            transition: all 0.3s;
-        }
-        
-        .copy-btn:hover {
-            background: #1d4ed8;
-        }
-        
-        .auto-update {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-top: 15px;
-            color: var(--gray);
-            font-size: 0.9rem;
-        }
-        
-        .notification {
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            display: none;
-        }
-        
-        .notification.success {
-            background: #d1fae5;
-            color: #065f46;
-            border: 1px solid #a7f3d0;
-        }
-        
-        .notification.error {
-            background: #fee2e2;
-            color: #b91c1c;
-            border: 1px solid #fecaca;
-        }
-        
-        footer {
-            text-align: center;
-            margin-top: 40px;
-            color: var(--gray);
-            padding-top: 20px;
-            border-top: 1px solid #e5e7eb;
-        }
-        
-        .developer {
-            font-weight: bold;
-            color: var(--primary);
-        }
-        
-        .no-feeds {
-            text-align: center;
-            color: var(--gray);
-            padding: 30px;
-        }
-        
-        .format-selector {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-        
-        .format-option {
-            flex: 1;
-            text-align: center;
-            padding: 15px;
-            border: 2px solid #e5e7eb;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .format-option.selected {
-            border-color: var(--primary);
-            background: #f0f4ff;
-        }
-        
-        .format-option i {
-            font-size: 2rem;
-            margin-bottom: 10px;
-            color: var(--primary);
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RS AutoFeed Generator - Studio RS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #10b981;
+            --dark: #1f2937;
+            --light: #f9fafb;
+            --gray: #6b7280;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f8ff;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary), #1d4ed8);
+            color: white;
+            padding: 25px 0;
+            text-align: center;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .logo {
+            margin-top: 15px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #fff;
+            background: rgba(0, 0, 0, 0.2);
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 20px;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 900px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .setup-panel, .feeds-panel {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        .panel-title {
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f4ff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .input-group input:focus, .input-group select:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        
+        .keyword-input {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .keyword-input input {
+            flex: 1;
+        }
+        
+        .add-btn {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 0 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .add-btn:hover {
+            background: #059669;
+        }
+        
+        .keywords-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+            min-height: 50px;
+            padding: 10px;
+            border: 2px dashed #e5e7eb;
+            border-radius: 10px;
+        }
+        
+        .keyword-item {
+            background: var(--primary);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .keyword-item button {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        .generate-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        
+        .generate-btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+        }
+        
+        .feed-item {
+            background: #f8faff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .feed-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .feed-title {
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+        
+        .feed-url {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-family: monospace;
+            overflow-x: auto;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .copy-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s;
+        }
+        
+        .copy-btn:hover {
+            background: #1d4ed8;
+        }
+        
+        .auto-update {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        .notification {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .notification.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+        
+        .notification.error {
+            background: #fee2e2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: var(--gray);
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        .developer {
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .no-feeds {
+            text-align: center;
+            color: var(--gray);
+            padding: 30px;
+        }
+        
+        .format-selector {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .format-option {
+            flex: 1;
+            text-align: center;
+            padding: 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .format-option.selected {
+            border-color: var(--primary);
+            background: #f0f4ff;
+        }
+        
+        .format-option i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1><i class="fas fa-rss"></i> RS AutoFeed Generator</h1>
-            <p>Gere feeds automáticos por palavra-chave para seu site</p>
-            <div class="logo">Studio RS Ilhabela</div>
-        </header>
-        
-        <div id="notification" class="notification"></div>
-        
-        <div class="main-content">
-            <div class="setup-panel">
-                <h2 class="panel-title"><i class="fas fa-cog"></i> Configuração</h2>
-                
-                <div class="input-group">
-                    <label>Formato do Feed:</label>
-                    <div class="format-selector">
-                        <div class="format-option selected" data-format="rss">
-                            <i class="fas fa-rss"></i>
-                            <div>RSS</div>
-                        </div>
-                        <div class="format-option" data-format="json">
-                            <i class="fas fa-code"></i>
-                            <div>JSON</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="input-group">
-                    <label>Adicionar Palavra-Chave:</label>
-                    <div class="keyword-input">
-                        <input type="text" id="keyword-input" placeholder="Ex: Ilhabela, Esportes, Tecnologia">
-                        <button class="add-btn" id="add-btn">
-                            <i class="fas fa-plus"></i>
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="input-group">
-                    <label>Palavras-Chave Adicionadas:</label>
-                    <div class="keywords-list" id="keywords-list">
-                        <!-- Palavras-chave serão adicionadas aqui -->
-                    </div>
-                </div>
-                
-                <div class="input-group">
-                    <label>Limite de Notícias por Feed:</label>
-                    <select id="limit">
-                        <option value="5">5 notícias</option>
-                        <option value="10" selected>10 notícias</option>
-                        <option value="15">15 notícias</option>
-                        <option value="20">20 notícias</option>
-                    </select>
-                </div>
-                
-                <button class="generate-btn" id="generate-btn">
-                    <i class="fas fa-bolt"></i> Gerar Links de Feeds
-                </button>
-            </div>
-            
-            <div class="feeds-panel">
-                <h2 class="panel-title"><i class="fas fa-link"></i> Feeds Gerados</h2>
-                <div id="feeds-container">
-                    <div class="no-feeds" id="no-feeds">
-                        <i class="fas fa-rss" style="font-size: 3rem; color: #e5e7eb; margin-bottom: 15px;"></i>
-                        <p>Nenhum feed gerado ainda.</p>
-                        <p>Adicione palavras-chave e clique em "Gerar Links de Feeds".</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <footer>
-            <p>Desenvolvido por: <span class="developer">Studio RS Ilhabela</span></p>
-        </footer>
-    </div>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-rss"></i> RS AutoFeed Generator</h1>
+            <p>Gere feeds automáticos por palavra-chave para seu site</p>
+            <div class="logo">Studio RS Ilhabela</div>
+        </header>
+        
+        <div id="notification" class="notification"></div>
+        
+        <div class="main-content">
+            <div class="setup-panel">
+                <h2 class="panel-title"><i class="fas fa-cog"></i> Configuração</h2>
+                
+                <div class="input-group">
+                    <label>Formato do Feed:</label>
+                    <div class="format-selector">
+                        <div class="format-option selected" data-format="rss">
+                            <i class="fas fa-rss"></i>
+                            <div>RSS</div>
+                        </div>
+                        <div class="format-option" data-format="json">
+                            <i class="fas fa-code"></i>
+                            <div>JSON</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label>Adicionar Palavra-Chave:</label>
+                    <div class="keyword-input">
+                        <input type="text" id="keyword-input" placeholder="Ex: Ilhabela, Esportes, Tecnologia">
+                        <button class="add-btn" id="add-btn">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label>Palavras-Chave Adicionadas:</label>
+                    <div class="keywords-list" id="keywords-list">
+                                            </div>
+                </div>
+                
+                <div class="input-group">
+                    <label>Limite de Notícias por Feed:</label>
+                    <select id="limit">
+                        <option value="5">5 notícias</option>
+                        <option value="10" selected>10 notícias</option>
+                        <option value="15">15 notícias</option>
+                        <option value="20">20 notícias</option>
+                    </select>
+                </div>
+                
+                <button class="generate-btn" id="generate-btn">
+                    <i class="fas fa-bolt"></i> Gerar Links de Feeds
+                </button>
+            </div>
+            
+            <div class="feeds-panel">
+                <h2 class="panel-title"><i class="fas fa-link"></i> Feeds Gerados</h2>
+                <div id="feeds-container">
+                    <div class="no-feeds" id="no-feeds">
+                        <i class="fas fa-rss" style="font-size: 3rem; color: #e5e7eb; margin-bottom: 15px;"></i>
+                        <p>Nenhum feed gerado ainda.</p>
+                        <p>Adicione palavras-chave e clique em "Gerar Links de Feeds".</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Desenvolvido por: <span class="developer">Studio RS Ilhabela</span></p>
+        </footer>
+    </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const keywordInput = document.getElementById('keyword-input');
-            const addBtn = document.getElementById('add-btn');
-            const keywordsList = document.getElementById('keywords-list');
-            const generateBtn = document.getElementById('generate-btn');
-            const feedsContainer = document.getElementById('feeds-container');
-            const noFeeds = document.getElementById('no-feeds');
-            const notification = document.getElementById('notification');
-            const formatOptions = document.querySelectorAll('.format-option');
-            const limitSelect = document.getElementById('limit');
-            
-            let keywords = [];
-            let selectedFormat = 'rss';
-            let baseUrl = window.location.origin;
-            
-            // Carregar dados salvos
-            function loadSavedData() {
-                const savedKeywords = localStorage.getItem('feedKeywords');
-                const savedFeeds = localStorage.getItem('generatedFeeds');
-                
-                if (savedKeywords) {
-                    keywords = JSON.parse(savedKeywords);
-                    renderKeywords();
-                }
-                
-                if (savedFeeds) {
-                    renderFeeds(JSON.parse(savedFeeds));
-                }
-            }
-            
-            // Salvar dados
-            function saveData() {
-                localStorage.setItem('feedKeywords', JSON.stringify(keywords));
-            }
-            
-            // Mostrar notificação
-            function showNotification(message, type) {
-                notification.textContent = message;
-                notification.className = `notification ${type}`;
-                notification.style.display = 'block';
-                
-                setTimeout(() => {
-                    notification.style.display = 'none';
-                }, 5000);
-            }
-            
-            // Renderizar palavras-chave
-            function renderKeywords() {
-                keywordsList.innerHTML = '';
-                
-                if (keywords.length === 0) {
-                    keywordsList.innerHTML = '<div style="color: #9ca3af; text-align: center; width: 100%;">Nenhuma palavra-chave adicionada</div>';
-                    return;
-                }
-                
-                keywords.forEach((keyword, index) => {
-                    const keywordItem = document.createElement('div');
-                    keywordItem.className = 'keyword-item';
-                    keywordItem.innerHTML = `
-                        ${keyword}
-                        <button onclick="removeKeyword(${index})">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    `;
-                    keywordsList.appendChild(keywordItem);
-                });
-            }
-            
-            // Renderizar feeds
-            function renderFeeds(feedsData) {
-                if (!feedsData || feedsData.length === 0) {
-                    noFeeds.style.display = 'block';
-                    feedsContainer.innerHTML = '';
-                    return;
-                }
-                
-                noFeeds.style.display = 'none';
-                feedsContainer.innerHTML = '';
-                
-                feedsData.forEach((feed, index) => {
-                    const feedItem = document.createElement('div');
-                    feedItem.className = 'feed-item';
-                    
-                    // Gerar URL do feed (simulação)
-                    const feedUrl = `${baseUrl}/feed.${selectedFormat}?keyword=${encodeURIComponent(feed.keyword)}&limit=${limitSelect.value}`;
-                    
-                    feedItem.innerHTML = `
-                        <div class="feed-header">
-                            <div class="feed-title">
-                                <i class="fas fa-rss"></i> ${feed.keyword}
-                            </div>
-                            <button class="copy-btn" onclick="copyFeedUrl('${feedUrl}', ${index})">
-                                <i class="fas fa-copy"></i> Copiar URL
-                            </button>
-                        </div>
-                        <div class="feed-url">${feedUrl}</div>
-                        <div class="auto-update">
-                            <i class="fas fa-sync-alt"></i> Atualiza automaticamente a cada hora
-                        </div>
-                    `;
-                    
-                    feedsContainer.appendChild(feedItem);
-                });
-                
-                // Salvar feeds gerados
-                localStorage.setItem('generatedFeeds', JSON.stringify(feedsData));
-            }
-            
-            // Adicionar palavra-chave
-            addBtn.addEventListener('click', function() {
-                const keyword = keywordInput.value.trim();
-                
-                if (!keyword) {
-                    showNotification('Por favor, digite uma palavra-chave', 'error');
-                    return;
-                }
-                
-                if (keywords.includes(keyword)) {
-                    showNotification('Esta palavra-chave já foi adicionada', 'error');
-                    return;
-                }
-                
-                keywords.push(keyword);
-                keywordInput.value = '';
-                renderKeywords();
-                saveData();
-                
-                showNotification(`Palavra-chave "${keyword}" adicionada`, 'success');
-            });
-            
-            // Remover palavra-chave
-            window.removeKeyword = function(index) {
-                const removed = keywords.splice(index, 1)[0];
-                renderKeywords();
-                saveData();
-                showNotification(`Palavra-chave "${removed}" removida`, 'success');
-            };
-            
-            // Selecionar formato
-            formatOptions.forEach(option => {
-                option.addEventListener('click', function() {
-                    formatOptions.forEach(opt => opt.classList.remove('selected'));
-                    this.classList.add('selected');
-                    selectedFormat = this.dataset.format;
-                });
-            });
-            
-            // Gerar feeds
-            generateBtn.addEventListener('click', function() {
-                if (keywords.length === 0) {
-                    showNotification('Adicione pelo menos uma palavra-chave', 'error');
-                    return;
-                }
-                
-                const feedsData = keywords.map(keyword => ({ keyword }));
-                renderFeeds(feedsData);
-                
-                showNotification(`${keywords.length} feeds ${selectedFormat.toUpperCase()} gerados com sucesso!`, 'success');
-            });
-            
-            // Copiar URL do feed
-            window.copyFeedUrl = function(url, index) {
-                navigator.clipboard.writeText(url).then(() => {
-                    showNotification('URL copiada para a área de transferência!', 'success');
-                    
-                    // Efeito visual de confirmação
-                    const copyButtons = document.querySelectorAll('.copy-btn');
-                    if (copyButtons[index]) {
-                        const originalText = copyButtons[index].innerHTML;
-                        copyButtons[index].innerHTML = '<i class="fas fa-check"></i> Copiado!';
-                        
-                        setTimeout(() => {
-                            copyButtons[index].innerHTML = originalText;
-                        }, 2000);
-                    }
-                }).catch(err => {
-                    showNotification('Falha ao copiar URL', 'error');
-                });
-            };
-            
-            // Enter para adicionar palavra-chave
-            keywordInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    addBtn.click();
-                }
-            });
-            
-            // Inicializar
-            loadSavedData();
-            renderKeywords();
-        });
-    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const keywordInput = document.getElementById('keyword-input');
+            const addBtn = document.getElementById('add-btn');
+            const keywordsList = document.getElementById('keywords-list');
+            const generateBtn = document.getElementById('generate-btn');
+            const feedsContainer = document.getElementById('feeds-container');
+            const noFeeds = document.getElementById('no-feeds');
+            const notification = document.getElementById('notification');
+            const formatOptions = document.querySelectorAll('.format-option');
+            const limitSelect = document.getElementById('limit');
+            
+            let keywords = [];
+            let selectedFormat = 'rss';
+
+            // === URL DO SEU BACKEND AQUI ===
+            // Se estiver rodando local, use 'http://localhost:3000'
+            // Se estiver online (por exemplo, na Vercel), use a URL pública, ex: 'https://seu-servidor.vercel.app'
+            const backendUrl = 'SUA_URL_DO_BACKEND_AQUI';
+            // ===============================
+            
+            // Carregar dados salvos
+            function loadSavedData() {
+                const savedKeywords = localStorage.getItem('feedKeywords');
+                const savedFeeds = localStorage.getItem('generatedFeeds');
+                
+                if (savedKeywords) {
+                    keywords = JSON.parse(savedKeywords);
+                    renderKeywords();
+                }
+                
+                if (savedFeeds) {
+                    renderFeeds(JSON.parse(savedFeeds));
+                }
+            }
+            
+            // Salvar dados
+            function saveData() {
+                localStorage.setItem('feedKeywords', JSON.stringify(keywords));
+            }
+            
+            // Mostrar notificação
+            function showNotification(message, type) {
+                notification.textContent = message;
+                notification.className = `notification ${type}`;
+                notification.style.display = 'block';
+                
+                setTimeout(() => {
+                    notification.style.display = 'none';
+                }, 5000);
+            }
+            
+            // Renderizar palavras-chave
+            function renderKeywords() {
+                keywordsList.innerHTML = '';
+                
+                if (keywords.length === 0) {
+                    keywordsList.innerHTML = '<div style="color: #9ca3af; text-align: center; width: 100%;">Nenhuma palavra-chave adicionada</div>';
+                    return;
+                }
+                
+                keywords.forEach((keyword, index) => {
+                    const keywordItem = document.createElement('div');
+                    keywordItem.className = 'keyword-item';
+                    keywordItem.innerHTML = `
+                        ${keyword}
+                        <button onclick="removeKeyword(${index})">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+                    keywordsList.appendChild(keywordItem);
+                });
+            }
+            
+            // Renderizar feeds
+            function renderFeeds(feedsData) {
+                if (!feedsData || feedsData.length === 0) {
+                    noFeeds.style.display = 'block';
+                    feedsContainer.innerHTML = '';
+                    return;
+                }
+                
+                noFeeds.style.display = 'none';
+                feedsContainer.innerHTML = '';
+                
+                feedsData.forEach((feed, index) => {
+                    const feedItem = document.createElement('div');
+                    feedItem.className = 'feed-item';
+                    
+                    // === URL DO FEED AQUI ===
+                    const feedUrl = `${backendUrl}/feed/${selectedFormat}/${encodeURIComponent(feed.keyword)}?limit=${limitSelect.value}`;
+                    // =========================
+                    
+                    feedItem.innerHTML = `
+                        <div class="feed-header">
+                            <div class="feed-title">
+                                <i class="fas fa-rss"></i> ${feed.keyword}
+                            </div>
+                            <button class="copy-btn" onclick="copyFeedUrl('${feedUrl}', ${index})">
+                                <i class="fas fa-copy"></i> Copiar URL
+                            </button>
+                        </div>
+                        <div class="feed-url">${feedUrl}</div>
+                        <div class="auto-update">
+                            <i class="fas fa-sync-alt"></i> Atualiza automaticamente a cada 15-30 minutos (depende do seu agregador)
+                        </div>
+                    `;
+                    
+                    feedsContainer.appendChild(feedItem);
+                });
+                
+                // Salvar feeds gerados
+                localStorage.setItem('generatedFeeds', JSON.stringify(feedsData));
+            }
+            
+            // Adicionar palavra-chave
+            addBtn.addEventListener('click', function() {
+                const keyword = keywordInput.value.trim();
+                
+                if (!keyword) {
+                    showNotification('Por favor, digite uma palavra-chave', 'error');
+                    return;
+                }
+                
+                if (keywords.includes(keyword)) {
+                    showNotification('Esta palavra-chave já foi adicionada', 'error');
+                    return;
+                }
+                
+                keywords.push(keyword);
+                keywordInput.value = '';
+                renderKeywords();
+                saveData();
+                
+                showNotification(`Palavra-chave "${keyword}" adicionada`, 'success');
+            });
+            
+            // Remover palavra-chave
+            window.removeKeyword = function(index) {
+                const removed = keywords.splice(index, 1)[0];
+                renderKeywords();
+                saveData();
+                showNotification(`Palavra-chave "${removed}" removida`, 'success');
+            };
+            
+            // Selecionar formato
+            formatOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    formatOptions.forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedFormat = this.dataset.format;
+                });
+            });
+            
+            // Gerar feeds
+            generateBtn.addEventListener('click', function() {
+                if (keywords.length === 0) {
+                    showNotification('Adicione pelo menos uma palavra-chave', 'error');
+                    return;
+                }
+                
+                const feedsData = keywords.map(keyword => ({ keyword }));
+                renderFeeds(feedsData);
+                
+                showNotification(`${keywords.length} feeds ${selectedFormat.toUpperCase()} gerados com sucesso!`, 'success');
+            });
+            
+            // Copiar URL do feed
+            window.copyFeedUrl = function(url, index) {
+                navigator.clipboard.writeText(url).then(() => {
+                    showNotification('URL copiada para a área de transferência!', 'success');
+                    
+                    // Efeito visual de confirmação
+                    const copyButtons = document.querySelectorAll('.copy-btn');
+                    if (copyButtons[index]) {
+                        const originalText = copyButtons[index].innerHTML;
+                        copyButtons[index].innerHTML = '<i class="fas fa-check"></i> Copiado!';
+                        
+                        setTimeout(() => {
+                            copyButtons[index].innerHTML = originalText;
+                        }, 2000);
+                    }
+                }).catch(err => {
+                    showNotification('Falha ao copiar URL', 'error');
+                });
+            };
+            
+            // Enter para adicionar palavra-chave
+            keywordInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    addBtn.click();
+                }
+            });
+            
+            // Inicializar
+            loadSavedData();
+            renderKeywords();
+        });
+    </script>
 </body>
 </html>
