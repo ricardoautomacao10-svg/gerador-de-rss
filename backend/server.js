@@ -1,13 +1,10 @@
-// server.js (Versão Corrigida)
-
 const express = require('express');
 const axios = require('axios');
-const cors =require('cors');
-require('dotenv').config(); // Adicione esta linha no topo para carregar variáveis de ambiente
+const cors = require('cors');
+require('dotenv').config();
 
 const app = express();
-// Use a porta do ambiente de produção ou 3000 para desenvolvimento
-const port = process.env.PORT || 3000; 
+const port = process.env.PORT || 3000;
 
 // Sua chave da API NewsAPI (agora vinda de um arquivo .env)
 const API_KEY = process.env.NEWS_API_KEY;
@@ -16,10 +13,10 @@ const API_KEY = process.env.NEWS_API_KEY;
 app.use(cors());
 app.use(express.json());
 
-// Função para buscar notícias (sem alterações)
+// Função para buscar notícias na NewsAPI
 async function fetchNews(keyword) {
     if (!API_KEY) {
-        console.error('Chave da API não encontrada. Crie um arquivo .env com NEWS_API_KEY.');
+        console.error('ERRO: Chave da API (NEWS_API_KEY) não encontrada no arquivo .env.');
         return [];
     }
     try {
@@ -27,15 +24,13 @@ async function fetchNews(keyword) {
         const response = await axios.get(apiUrl);
         return response.data.articles;
     } catch (error) {
-        console.error('Erro ao buscar notícias:', error.message);
+        console.error('ERRO ao buscar notícias:', error.message);
         return [];
     }
 }
 
-// Funções para gerar RSS e JSON (sem alterações)
+// Função para gerar RSS a partir dos artigos
 function generateRss(keyword, articles) {
-    // ... seu código original aqui ...
-    // Apenas mude o <link> para o URL público do seu app quando for hospedar
     let rss = `<?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0">
 <channel>
@@ -64,13 +59,13 @@ function generateRss(keyword, articles) {
     return rss;
 }
 
+// Função para gerar JSON a partir dos artigos
 function generateJson(keyword, articles) {
-    // ... seu código original aqui ...
-     const feed = {
+    const feed = {
         version: "https://jsonfeed.org/version/1.1",
         title: `Notícias sobre ${keyword}`,
         home_page_url: `URL_DO_SEU_SITE_AQUI`,
-        feed_url: `URL_DO_SEU_SITE_AQUI/feed/json/${encodeURIComponent(keyword)}`,
+        feed_url: `URL_DO_SEU_SITE_AQUI/feed/${encodeURIComponent(keyword)}`,
         description: `Feed de notícias sobre ${keyword}`,
         items: articles.map(article => {
             if (!article.title || article.title === '[Removed]') return null;
@@ -89,8 +84,8 @@ function generateJson(keyword, articles) {
     return feed;
 }
 
+// Função auxiliar para escape de XML
 function escapeXml(unsafe) {
-    // ... seu código original aqui ...
     return unsafe.replace(/[<>&'"]/g, function (c) {
         switch (c) {
             case '<': return '&lt;';
@@ -102,13 +97,13 @@ function escapeXml(unsafe) {
     });
 }
 
-// ===== NOVA ROTA DINÂMICA =====
+// Rota para gerar feeds dinamicamente
 app.get('/feed/:format/:keyword', async (req, res) => {
     const { format, keyword } = req.params;
-    const { limit } = req.query; // Pega o limite da query string
+    const { limit } = req.query;
 
     if (!keyword) {
-        return res.status(400).send('Parâmetro "keyword" é obrigatório');
+        return res.status(400).send('Parâmetro "keyword" é obrigatório.');
     }
 
     try {
@@ -131,6 +126,19 @@ app.get('/feed/:format/:keyword', async (req, res) => {
     }
 });
 
+// A sua rota original para o front-end também foi simplificada
+app.get('/news', async (req, res) => {
+    const { keyword } = req.query;
+    if (!keyword) {
+        return res.status(400).json({ error: 'Parâmetro "keyword" é obrigatório' });
+    }
+    try {
+        const articles = await fetchNews(keyword);
+        res.json(articles);
+    } catch (error) {
+        res.status(500).json({ error: 'Erro ao buscar notícias' });
+    }
+});
 
 app.listen(port, () => {
     console.log(`Servidor rodando em http://localhost:${port}`);
